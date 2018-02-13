@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------------
-#_joins_preimages_of_partitions(preimage1,preimage2): list of lists
+#_join_preimages_of_partitions(preimage1,preimage2): list of lists
 #------------------------------------------------------------------------------
 '''
 This function takes a pair of lists of disjoint lists of indices (the indices should not be repeated and should range from 0 to a fixed positive integer) and returns the list of the maximal unions of internal lists that intersect within the concatenation of the two input lists (see below). 
@@ -17,11 +17,11 @@ we can notice that
 and
 [2] only intersects with [2]
 so that we have
-_joins_preimages_of_partitions(p1,p2) = [[1, 4, 0, 3], [2]]
+_join_preimages_of_partitions(p1,p2) = [[1, 4, 0, 3], [2]]
 
-In terms of implementation, the procedure _joins_preimages_of_partitions(p1,p2) considers each internal list of p1 and searches for the lists of p2 that intersect it. If an intersection is found between two internal lists, it merges the two internal lists in p1 and empties that of p2 (the list is emptied and *not* removed in order to preserve a coherent indexing of the elements of p2). The function continues until all the possible intersections have been checked.
+In terms of implementation, the procedure _join_preimages_of_partitions(p1,p2) considers each internal list of p1 and searches for the lists of p2 that intersect it. If an intersection is found between two internal lists, it merges the two internal lists in p1 and empties that of p2 (the list is emptied and *not* removed in order to preserve a coherent indexing of the elements of p2). The function continues until all the possible intersections have been checked.
 
-Here is a detail of what _joins_preimages_of_partitions(p1,p2) does with respect to the earlier example:
+Here is a detail of what _join_preimages_of_partitions(p1,p2) does with respect to the earlier example:
 
 The element 0 of [0,3] is searched in the list [0,1] of p2;
 The element 0 is found;
@@ -62,53 +62,53 @@ The output is all the non-empty lists of p2; i.e. [[1, 4, 0, 3], [2]]
 '''
 from iop import _image_of_partition
 
-def _joins_preimages_of_partitions(preimage1,preimage2):
-  #spaces are allocated in the memory so that the lists saved at the addresses
+def _join_preimages_of_partitions(preimage1,preimage2):
+  #Spaces are allocated in the memory so that the lists saved at the addresses
   #of the variables 'preimage1' and 'preimage2' are not modified.
-  #For convenience, we will refer to tmp1 and tmp2 as preimage1 and preimage2
+  #For convenience, we will refer to tmp1 and tmp2 as preimage1 and preimage2.
   tmp1 = preimage1
   tmp2 = preimage2
-  #reads preimage1
+  #Reads preimage1;
   for i1 in range(len(tmp1)):
-    #reads in the i1-th internal lists of preimage1
+    #Reads in the i1-th internal lists of preimage1;
     for j1 in range(len(tmp1[i1])):
-      #reads preimage2
+      #Reads preimage2;
       for i2 in range(len(tmp2)):
-        #the variable flag indicates whether the value tmp1[i1][j1]
-        #has been found in one of the internal lists of preimage2
+        #The variable flag indicates whether the value tmp1[i1][j1]
+        #has been found in one of the internal lists of preimage2;
         flag = 0
-        #reads in the i2-th internal lists of preimage2
+        #Reads in the i2-th internal lists of preimage2.
         for j2 in range(len(tmp2[i2])):
-          #the j1-th element of the i1-th internal list of preimage1
+          #The j1-th element of the i1-th internal list of preimage1
           #is found in preimage2, specifically at position j2 
-          #of the i2-th internal list
+          #of the i2-th internal list.
           if tmp1[i1][j1] == tmp2[i2][j2]:
-            #the i2-th internal lists of preimage2 is appended
-            #to the i1-th internal lists of preimage1
+            #The i2-th internal lists of preimage2 is appended
+            #to the i1-th internal lists of preimage1.
             tmp1[i1].extend(tmp2[i2])
-            #the i2-th internal lists of preimage2 is emptied
+            #The i2-th internal lists of preimage2 is emptied.
             tmp2[i2]=[]
-            #repeated elements occuring in the union of the two internal 
-            #lists, in preimage1, are eliminated 
+            #Repeated elements occuring in the union of the two internal 
+            #lists, in preimage1, are eliminated.
             tmp1[i1] = _image_of_partition(tmp1[i1])
-            #flag indicates that the j1-th element of the i1-th 
-            #internal list of preimage1 was found in preimage2
+            #the variable flag indicates whether the j1-th element of  
+            #the i1-th internal list of preimage1 was found in preimage2.
             flag = 1
             break
-        #tmp1[i1][j1] no longer needs to be searched in preimage2 
+        #tmp1[i1][j1] no longer needs to be searched in preimage2.
         if flag == 1:
           break
     #On the one hand, the union of the first internal list of preimage1 
     #with all the other internal lists of preimage2 that intersect 
-    #it is appended to preimage2
+    #it is appended to preimage2.
     tmp2.append(tmp1[i1])
-    #On the other hand, this union is emptied in preimage1
+    #On the other hand, this union is emptied in preimage1.
     tmp1[i1] = []
-  #a space is allocated for the output of the procedure
+  #A space is allocated for the output of the procedure.
   the_join = list()
-  #only includes the non-empty lists of preimage2 in the output
+  #Only includes the non-empty lists of preimage2 in the output.
   for i in range(len(tmp2)):
     if tmp2[i]!=[]:
       the_join.append(tmp2[i])
-  #the output contains the non-empty lists of preimage2
+  #The output contains the non-empty lists of preimage2.
   return the_join

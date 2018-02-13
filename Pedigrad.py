@@ -12,7 +12,7 @@ from PartitionCategory import *
 import sys
 sys.path.insert(0, 'Pedigrad_py/PedigradCategory/')
 from PedigradCategory import *
-# READ_DNA = 1
+#READ_DNA = 1
 #process_local_analysis(local_analysis,exceptions,positions): list of 2-tuples
 #Pedigrad: .local, .loci, .taxa, .partition
 #----------------------------------------------------------------------------

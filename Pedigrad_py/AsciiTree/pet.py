@@ -13,13 +13,13 @@ from patf import print_atf
 
 
 def print_evolutionary_tree(partitions):
-  #returns a sequence of morphisms of partitions
+  #Returns a sequence of morphisms of partitions.
   tree = tree_of_partitions(partitions)
-  #returns an ascii tree pre-format and its depth
+  #Returns an ascii tree pre-format and its depth.
   atpf = convert_tree_to_atpf(tree)
-  #returns the ascii tree format of the atpf
+  #Returns the ascii tree format of the atpf.
   atf = convert_atpf_to_atf(atpf[0],atpf[1])
-  #prints the atf on the standard output
+  #Prints the atf on the standard output.
   print_atf(atf,atpf[1])
 
 

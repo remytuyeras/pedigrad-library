@@ -6,16 +6,16 @@ This function takes two lists of the same legnth and returns their coproduct (or
 
 '''
 from pop import _preimage_of_partition
-from jpop import _joins_preimages_of_partitions
+from jpop import _join_preimages_of_partitions
 from qop import _quotient_of_preimage
 
 def coproduct_of_partitions(partition1,partition2):
-  #checks if the coproduct is possible
+  #The following line checks if the coproduct is possible.
   if len(partition1) == len(partition2):
-    #returns one of the possible constructions of the coproduct 
-    #of two partitions
+    #Returns one of the possible constructions of the coproduct 
+    #of two partitions.
     return _quotient_of_preimage(
-_joins_preimages_of_partitions(
+_join_preimages_of_partitions(
 _preimage_of_partition(partition1),
 _preimage_of_partition(partition2)))
   else:

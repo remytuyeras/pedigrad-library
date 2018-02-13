@@ -16,14 +16,14 @@ If the pair of MorphismOfPartitions do not fit the desired format, the construct
 '''
 
 class SpanOfPartitions:
-  #the objects of the class are:
-  #.peak (list)
-  #.left (MorphismOfPartitions)
-  #.right (MorphismOfPartitions)
+  #The objects of the class are:
+  #.peak (list);
+  #.left (MorphismOfPartitions);
+  #.right (MorphismOfPartitions).
   def __init__(self,left_morphism,right_morphism):
-    #checks whether the two input morphisms have the same source object
+    #Checks whether the two input morphisms have the same source object.
     if left_morphism.source == right_morphism.source:
-      #if it is so, the pair of morphisms is a valid span structure
+      #If it is so, the pair of morphisms is a valid span structure.
       self.peak = left_morphism.source
       self.left = left_morphism
       self.right = right_morphism

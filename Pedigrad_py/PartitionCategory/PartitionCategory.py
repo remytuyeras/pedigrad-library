@@ -1,14 +1,14 @@
 from iop import _image_of_partition
 #_image_of_partition(partition): list
 
-from efp import _epi_factorizes_partition
-#_epi_factorizes_partition(partition): list
+from efp import _epi_factorize_partition
+#_epi_factorize_partition(partition): list
 
 from pop import _preimage_of_partition
 #_preimage_of_partition(partition): list of lists
 
-from jpop import _joins_preimages_of_partitions
-#_joins_preimages_of_partitions(preimage1,preimage2): list of lists
+from jpop import _join_preimages_of_partitions
+#_join_preimages_of_partitions(preimage1,preimage2): list of lists
 
 from pp import print_partition
 #print_partition(partition): standard output

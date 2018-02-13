@@ -25,8 +25,8 @@ A   C   D...E   F   B
 import sys
 
 def print_atf(atf,depth):
-  #if depth = 0 then the program terminates and the tree is printed 
-  #on the standard output
+  #If depth = 0 then the program terminates and the tree is printed 
+  #on the standard output.
   if depth != 0 :
     for j in range(len(atf)):
       sys.stdout.write("|   ")
@@ -35,10 +35,10 @@ def print_atf(atf,depth):
     sys.stdout.write("\n")
     sys.stdout.flush()
     for j in range(len(atf)):
-      #print branches for intermediate levels
+      #Prints branches for intermediate levels.
       if depth != 1:
         sys.stdout.write("|")
-      #print the label of the leaves
+      #Prints the label of the leaves.
       else:
         for k in range(len(atf[j][1])):
           if k > 0:
@@ -46,7 +46,7 @@ def print_atf(atf,depth):
           sys.stdout.write(chr(65+atf[j][1][k]))
       for i in range(atf[j][0][1]):
         sys.stdout.write("____")
-      #print spaces between the branches of intermediate levels
+      #Prints spaces between the branches of intermediate levels.
       if depth != 1:
         for i in range(atf[j][0][0]-atf[j][0][1]-1):
           sys.stdout.write("    ")
@@ -58,7 +58,7 @@ def print_atf(atf,depth):
       #Truncates the atf from below so that 
       #the next level of the atf is turned into a forest.
       next_atf = next_atf + atf[i][1]
-    #recursion: continue to the next line on the standard output
+    #Recursion step: continues to the next line on the standard output.
     print_atf(next_atf, depth-1)
 
 

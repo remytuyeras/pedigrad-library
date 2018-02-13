@@ -42,14 +42,14 @@ def convert_atpf_to_atf(atpf,depth):
       #placed below it in the tree.
       atf_weight = atpf[j][0]-atpf[j][1][len(atpf[j][1])-1][0]
       atpf[j] =  ((atpf[j][0],atf_weight),atpf[j][1])
-    #A space is allocated in the memory to store the data of the output atf
+    #A space is allocated in the memory to store the data of the output atf.
     the_atf = list()
     #This loops takes care of preserving the bracketing structure of 
-    #the atpf/atf through the recursion step toward the next levels
+    #the atpf/atf through the recursion step toward the next levels.
     for j in range(len(atpf)):
       the_atf = the_atf + [(atpf[j][0],convert_atpf_to_atf(atpf[j][1],depth-1))]    
     return the_atf
-  #takes care of leaves (depth = 1)
+  #Takes care of leaves (depth = 1).
   else:
     the_atf = list()
     for i in range(len(atpf)):
