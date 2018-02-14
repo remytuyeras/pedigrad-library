@@ -1,14 +1,14 @@
-# The present directory contains:
+## The present directory contains:
 
 1. a python file: Pedigrad.py (headers)
 2. a pdf file: documentation.pdf (the documentation for the library)
 3. a directory: Pedigrad_py containing the modules: 
-  * AsciiTree;
-  * PartitionCategory; 
-  * and PedigradCategory.
+   * AsciiTree;
+   * PartitionCategory; 
+   * and PedigradCategory.
 
 
-# To use the functions and classes of the library, you can follow one of the following installation procedures:
+## To use the functions and classes of the library, you can follow one of the following installation procedures:
 
 **Installation 1 (quick)**
 
@@ -45,9 +45,9 @@ from Pedigrad import *
 - Use any other adequate installation procedure.
 
 
-# To import a non importable function from the library:
+## To import a non importable function from the library:
 
-**Copy the following text in the appropriate section of Pedigrad.py and replace the ```NameOfModule```, ```_non_importable_function``` and ```now_portable_function``` with the desired names.***
+Copy the following text in the appropriate section of Pedigrad.py and replace the ```NameOfModule```, ```_non_importable_function``` and ```now_portable_function``` with the desired names.
 
 ```
     from NameOfModule import _non_importable_function
