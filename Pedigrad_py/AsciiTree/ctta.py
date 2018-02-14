@@ -63,7 +63,7 @@ import sys
 
 sys.path.insert(0, '../PartitionCategory/')
 
-from pop import _preimage_of_partition
+from piop import _preimage_of_partition
 
 def convert_tree_to_atpf(tree):
   #The highest level in the atpf grammar (i.e. the leaves) is computed

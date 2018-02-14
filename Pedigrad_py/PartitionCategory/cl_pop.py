@@ -8,7 +8,7 @@ If the lengths of the two input lists are not equal, the constructor outputs and
 
 '''
 from efp import _epi_factorize_partition
-from ptop import _product_of_partitions
+from pop import _product_of_partitions
 from cl_mop import MorphismOfPartitions
 from cl_sop import SpanOfPartitions
 

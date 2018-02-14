@@ -56,14 +56,14 @@ class Pedigrad:
         #is not well-defined as a matrix, that is to say 
         #each line of the alignment does not contain the same number
         #of columns (or characters).
-        flag = 0
+        flag = False
         for i in range(len(self.taxa)-1):
           if len(alignment[0]) != len(alignment[i+1]):
-            #the vriable flag is set to 1 if the rows of the matrix 
+            #the vriable flag is set to True if the rows of the matrix 
             #do not have the same lengths
-            flag =1
+            flag =True
             break
-        if flag ==1:
+        if flag ==True:
           print("Error: in Pedigrad.__init__: alignment is not aligned")
           exit()
         #If the variable alignment defines a matrix, then the following lines

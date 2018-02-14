@@ -76,7 +76,7 @@ def _join_preimages_of_partitions(preimage1,preimage2):
       for i2 in range(len(tmp2)):
         #The variable flag indicates whether the value tmp1[i1][j1]
         #has been found in one of the internal lists of preimage2;
-        flag = 0
+        flag = False
         #Reads in the i2-th internal lists of preimage2.
         for j2 in range(len(tmp2[i2])):
           #The j1-th element of the i1-th internal list of preimage1
@@ -93,10 +93,10 @@ def _join_preimages_of_partitions(preimage1,preimage2):
             tmp1[i1] = _image_of_partition(tmp1[i1])
             #the variable flag indicates whether the j1-th element of  
             #the i1-th internal list of preimage1 was found in preimage2.
-            flag = 1
+            flag = True
             break
         #tmp1[i1][j1] no longer needs to be searched in preimage2.
-        if flag == 1:
+        if flag == True:
           break
     #On the one hand, the union of the first internal list of preimage1 
     #with all the other internal lists of preimage2 that intersect 

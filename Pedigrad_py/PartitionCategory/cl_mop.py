@@ -35,7 +35,7 @@ As can be seen, the argument 3 is 'mapped' to two different images, namely 3 and
 '''
 from efp import _epi_factorize_partition
 from iop import _image_of_partition
-from ptop import _product_of_partitions
+from pop import _product_of_partitions
 
 class MorphismOfPartitions:
   #The objects of the class are:

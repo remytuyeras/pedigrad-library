@@ -10,7 +10,7 @@ The code of this function is very similar to the code of the contructor associat
 
 from efp import _epi_factorize_partition
 from iop import _image_of_partition
-from ptop import _product_of_partitions
+from pop import _product_of_partitions
 
 def is_there_a_morphism(source,target):
   if len(source) == len(target):
@@ -24,7 +24,7 @@ def is_there_a_morphism(source,target):
     #epimorphism encoding the source partition to the codomain of the
     #epimorphsim encoding the target partition.
     relation = _image_of_partition(_product_of_partitions(epi_source,epi_target))
-    flag = 1
+    flag = True
     #The following loop checks if the binary relation meant to encode 
     #the arrow between the two partitions is a function.
     for i in range(len(relation)):
@@ -33,6 +33,6 @@ def is_there_a_morphism(source,target):
       #epi_target, namely the value contained in epi_arrow[i][1].
       #See cl_mop.py for more information.
       if relation[i][0]!=i:  
-        flag = 0
+        flag = False
         break
     return flag

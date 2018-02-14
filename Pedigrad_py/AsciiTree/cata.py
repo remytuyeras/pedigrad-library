@@ -47,7 +47,7 @@ def convert_atpf_to_atf(atpf,depth):
     #This loops takes care of preserving the bracketing structure of 
     #the atpf/atf through the recursion step toward the next levels.
     for j in range(len(atpf)):
-      the_atf = the_atf + [(atpf[j][0],convert_atpf_to_atf(atpf[j][1],depth-1))]    
+      the_atf = the_atf + [(atpf[j][0],convert_atpf_to_atf(atpf[j][1],depth-1))] 
     return the_atf
   #Takes care of leaves (depth = 1).
   else:

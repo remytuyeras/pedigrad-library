@@ -4,7 +4,7 @@ from iop import _image_of_partition
 from efp import _epi_factorize_partition
 #_epi_factorize_partition(partition): list
 
-from pop import _preimage_of_partition
+from piop import _preimage_of_partition
 #_preimage_of_partition(partition): list of lists
 
 from jpop import _join_preimages_of_partitions
@@ -19,7 +19,7 @@ from qop import _quotient_of_preimage
 from cop import coproduct_of_partitions
 #coproduct_of_partitions(partition1,partition2): list
 
-from ptop import _product_of_partitions
+from pop import _product_of_partitions
 #_product_of_partitions(partition1,partition2): list of 2-tuples
 
 from itam import is_there_a_morphism
