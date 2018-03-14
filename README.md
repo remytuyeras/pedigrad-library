@@ -4,8 +4,9 @@
 2. a pdf file: documentation.pdf (the documentation for the library)
 3. a directory: Pedigrad_py containing the modules: 
    * AsciiTree;
-   * PartitionCategory; 
-   * and PedigradCategory.
+   * PartitionCategory;
+   * PedigradCategory;
+   * and SegmentCategory.
 
 
 ## To use the functions and classes of the library, you can follow one of the following installation procedures:
@@ -47,12 +48,12 @@ from Pedigrad import *
 
 ## To import a non importable function from the library:
 
-Copy the following text in the appropriate section of Pedigrad.py and replace the ```NameOfModule```, ```_non_importable_function``` and ```now_portable_function``` with the desired names.
+Copy the following text in the appropriate section of Pedigrad.py and replace ```NameOfFile```, ```_non_importable_function``` and ```now_portable_function``` with the desired names.
 
 ```
-    from NameOfModule import _non_importable_function
-    def now_portable_function(arg1,arg2,...):
-      return _non_importable_function(arg1,arg2,...)
+    from NameOfFile import _non_importable_function
+    def now_portable_function(*args):
+      return _non_importable_function(*args)
 ```
 
 

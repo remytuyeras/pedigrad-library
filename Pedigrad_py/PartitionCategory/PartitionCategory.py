@@ -13,23 +13,17 @@ from jpop import _join_preimages_of_partitions
 from pp import print_partition
 #print_partition(partition): standard output
 
-from qop import _quotient_of_preimage
-#_quotient_of_preimage(preimage): list
+from cl_er import EquivalenceRelation
+#EquivalenceRelation: .classes, .range, .closure, .quotient
 
 from cop import coproduct_of_partitions
 #coproduct_of_partitions(partition1,partition2): list
 
-from pop import _product_of_partitions
-#_product_of_partitions(partition1,partition2): list of 2-tuples
+from pop import product_of_partitions
+#product_of_partitions(partition1,partition2): list
 
-from itam import is_there_a_morphism
-#is_there_a_morphism(source,target): Boolean
+from hii import homset_is_inhabited
+#homset_is_inhabited(source,target): Boolean
 
 from cl_mop import MorphismOfPartitions
 #MorphismOfPartitions: .arrow, .source, .target
-
-from cl_sop import SpanOfPartitions
-#SpanOfPartitions: .peak, .left, .right
-
-from cl_pop import ProductOfPartitions
-#ProductOfPartitions: .span

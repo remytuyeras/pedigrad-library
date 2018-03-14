@@ -4,7 +4,7 @@
 '''
 This function takes a pair of lists of disjoint lists of indices (the indices should not be repeated and should range from 0 to a fixed positive integer) and returns the list of the maximal unions of internal lists that intersect within the concatenation of the two input lists (see below). 
 
-In practice, the two input lists would be obtained as outputs of the procedure _preimage_of_partition(_,_) for two lists of the same length.
+In practice, the two input lists would be obtained as outputs of the procedure _preimage_of_partition(_,_) for two input lists of the same length.
 
 e.g.
 Considering the following lists of lists of indices
@@ -64,10 +64,23 @@ from iop import _image_of_partition
 
 def _join_preimages_of_partitions(preimage1,preimage2):
   #Spaces are allocated in the memory so that the lists saved at the addresses
-  #of the variables 'preimage1' and 'preimage2' are not modified.
-  #For convenience, we will refer to tmp1 and tmp2 as preimage1 and preimage2.
-  tmp1 = preimage1
-  tmp2 = preimage2
+  #of the variables 'preimage1' and 'preimage2' are not modified. 
+  tmp1 = list()
+  tmp2 = list()
+  #In addition, repetitions that may occur in each internal list of the 
+  #two inputs are eliminated: e.g. [7,1,3,4,7] --> [7,1,3,4]
+  for i in range(len(preimage1)):
+    intern1 = list()
+    for j in preimage1[i]:
+      if not(j in intern1):
+        intern1.append(j)
+    tmp1.append(intern1)
+  for i in range(len(preimage2)):
+    intern2 = list()
+    for j in preimage2[i]:
+      if not(j in intern2):
+        intern2.append(j)
+    tmp2.append(intern2)
   #Reads preimage1;
   for i1 in range(len(tmp1)):
     #Reads in the i1-th internal lists of preimage1;

@@ -14,8 +14,8 @@ Consider the following lists.
 p1 = [0, 1, 2, 3, 3, 4, 5]
 p2 = [0, 1, 2, 3, 3, 3, 1]
 
-Their product is as follows:
-p3 = _product_of_partitions(p1,p2) = [(0,0),(1,1),(2,2),(3,3),(3,3),(4,3),(5,1)]
+Their zip is as follows:
+p3 = zip(p1,p2) = [(0,0),(1,1),(2,2),(3,3),(3,3),(4,3),(5,1)]
 
 The image of the product is then as follows:
 p4 = _image_of_partition(p3) = [(0,0),(1,1),(2,2),(3,3),(4,3),(5,1)]
@@ -35,7 +35,6 @@ As can be seen, the argument 3 is 'mapped' to two different images, namely 3 and
 '''
 from efp import _epi_factorize_partition
 from iop import _image_of_partition
-from pop import _product_of_partitions
 
 class MorphismOfPartitions:
   #The objects of the class are:
@@ -53,7 +52,7 @@ class MorphismOfPartitions:
       #encode the function from the codomain of the underlying
       #epimorphism encoding the source partition to the codomain of the
       #epimorphsim encoding the target partition.
-      self.arrow = _image_of_partition(_product_of_partitions(self.source,self.target))
+      self.arrow = _image_of_partition(zip(self.source,self.target))
     #The following loop checks if the binary relation contained 
     #in self.arrow is a function.
     for i in range(len(self.arrow)):

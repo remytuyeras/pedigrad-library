@@ -18,7 +18,7 @@ def print_evolutionary_tree(partitions):
   #Returns an ascii tree pre-format and its depth.
   atpf = convert_tree_to_atpf(tree)
   #Returns the ascii tree format of the atpf.
-  atf = convert_atpf_to_atf(atpf[0],atpf[1])
+  atf = convert_atpf_to_atf(*atpf)
   #Prints the atf on the standard output.
   print_atf(atf,atpf[1])
 

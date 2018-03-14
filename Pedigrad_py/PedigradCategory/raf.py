@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------------
-#_read_alignment_file(name_of_file,reading_mode): 2-tuple
+#read_alignment_file(name_of_file,reading_mode): 2-tuple
 #------------------------------------------------------------------------------
 '''
 This function takes the name of a file (called name_of_file) and an integer and returns a pair of lists (names, alignment)
@@ -20,14 +20,14 @@ The index of a name in 'names' corresponds to the index of its associated text i
 '''
 READ_DNA = 1
 
-def _read_alignment_file(name_of_file,reading_mode):
+def read_alignment_file(name_of_file,reading_mode):
   # Opens the input file.
   the_file = open(name_of_file,"r")
   # Saves the text at the address of the variable the_text.
   the_text = str(the_file.read())
   # Closes the file.
   the_file.close()
-  #Allocation of the inputs in the memory.
+  #Spaces are allocated to store the two inputs in the memory.
   alignment = list()
   names = list()
   #Records the current reading position in the text saved in the memory.

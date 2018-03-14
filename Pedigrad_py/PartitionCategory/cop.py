@@ -7,19 +7,16 @@ This function takes two lists of the same legnth and returns their coproduct (or
 '''
 from piop import _preimage_of_partition
 from jpop import _join_preimages_of_partitions
-from qop import _quotient_of_preimage
+from cl_er import EquivalenceRelation
 
 def coproduct_of_partitions(partition1,partition2):
   #The following line checks if the coproduct is possible.
   if len(partition1) == len(partition2):
-    #Returns one of the possible constructions of the coproduct 
-    #of two partitions.
-    return _quotient_of_preimage(
-_join_preimages_of_partitions(
-_preimage_of_partition(partition1),
-_preimage_of_partition(partition2)))
+    #Returns the coproduct of two partitions as the quotient of the
+    #equivalence relation induced by the join of the preimages
+    #of the two partitions.
+    the_join = EquivalenceRelation(_join_preimages_of_partitions(_preimage_of_partition(partition1),_preimage_of_partition(partition2)))
+    return the_join.quotient()
   else:
     print("Error: in coproduct_of_partitions: lengths do not match.")
     exit()
-
-
