@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------------
-#Pedigrad(LocalAnalysis): .local, .taxa, .partition, .select, .common
+#Pedigrad(LocalAnalysis): .local, .taxa, .partition, .select, .agree
 #------------------------------------------------------------------------------
 '''
 This class is a subclass of LocalAnalysis that possesses two objects, namely
@@ -9,7 +9,7 @@ and two methods, namely
 -  .__init__ (constructor)
 -  .partition
 -  .select
--  .common
+-  .agree
 
 The consructor .__init__ takes the name of a file and an integer (as in the case of the function read_alignment_file) as well as a list of arguments that could be given to the constructor of LocalAnalysis (see __init__ in cl_la.py), except for the last argument that does not need to be given if the name of the file exists or the given name is actually empty. 
 
@@ -45,6 +45,29 @@ The method .partition takes
 If no argument is given, then the procedure returns a terminal partition. Otherwise, the procedure returns the image of the right Kan extension (see \cite{Phylog} for more details) of the underlying local analysis on the input segment. 
 
 This image is a partition that is computed as the product of the partitions in .local whose indices correspond to the indices of those segments in .base to which there is a morphism of segment from the input SegmentObject item.
+
+
+The method .select takes from 2 to 3 arguments and returns a Pedigrad item that can be seen as a restriction of the ambient pedigrad (self). Specifically, the method .select takes:
+- an EquivalenceRelation item (see PartitionCategory/cl_er.py);
+- an integer;
+- and if the previous integer is 1, a list of characters.
+
+If the integer input is not 1, then the procedure returns a pedigrad whose images (i.e. the outputs of the method .partition) are equal to the categorical products of the images of the ambient pedigrad (for the same segment) with the underlying partition of the EquivalenceRelation item passed to the function.
+
+P.select(eq,0).partition(s) = P.partition(s) x u.quotient()
+
+Broadly, this means that the partitions of the returned pedigrad gather those integers that:
+- are in non-trivial classes of the input RelationEquivalence item;
+- and are gathered in the corresponding partitions of the ambient pedigrad;
+and isolate those integers that:
+- are in trivial classes of the input RelationEquivalence item;
+- or are not present in the input RelationEquivalence item;
+
+If the integer input is 1, then the procedure returns the same images as those returned when the second input is 0, except for those images that originate from columns of the alignment containing strings in the third output at the indices specified in the EquivalenceRelation item, in which case these images are all equal to the terminal partition.
+
+
+The method .agree takes a list of SegmentObjects items and a list of non-negative integers (i.e. a partition) and returns all those segments contained in the first input whose images are equal to the second input. Categorically, this corresponds to pulling back what can be seen as the restriction of the pedigrad on the first input along the obvious functor 1 --> Part(S) determined by the second input.
+
 
 
 '''
@@ -166,7 +189,8 @@ class Pedigrad(LocalAnalysis):
               
 
   def partition(self,*args):
-    #If no argument is given, then the procedure returns the terminal partition.
+    #If no argument is given, then the procedure returns the terminal
+    #partition.
     if len(args) == 0:
       terminal_partition = list()
       #The (unique) value of the terminal partition is chosen to be 0.
@@ -174,7 +198,8 @@ class Pedigrad(LocalAnalysis):
         terminal_partition.append(0)
       return terminal_partition
     #Otherwise, the procedure 'partition' should exactly take 2 arguments.
-    #The first argument is either a regular expression specifying a SegmentObject
+    #The first argument is either a regular expression specifying a
+    #SegmentObject
     #item or a SegmentObject item. The two cases are detected via the second
     #argument, which should be equal to the global variable EXPR_MODE in the 
     #first case (see cl_la.py) and equal to the golbal variable SEGM_MODE
@@ -184,15 +209,16 @@ class Pedigrad(LocalAnalysis):
       exit()
     else:
       #If the second argument of args is EXPR_MODE, then the regular expression
-      #given in the first argument is converted into an acutal SegmentObject item.
+      #given in the first argument is converted into an acutal SegmentObject
+      #item.
       if args[1] == EXPR_MODE:
         the_segment = self.segment(args[0])
       #Otherwise, the SegmentObject item given in the first argument suffices.
       elif args[1] == SEGM_MODE:
         the_segment = args[0]
-      #Any other value than EXPR_MODE and SEGM_MODE is considered an error, which
-      #triggers the output of an error message and forces the procedure to exit
-      #the program. 
+      #Any other value than EXPR_MODE and SEGM_MODE is considered an error,
+      #which triggers the output of an error message and forces the procedure
+      #to exit the program. 
       else:
         print("Error: in Pedigrad.partition: \'"+str(args[1])+"\' is not recognized.")
         exit()
@@ -206,43 +232,95 @@ class Pedigrad(LocalAnalysis):
           the_image = product_of_partitions(the_image,self.local[i])
       #The resulting product of partitions is returned
       return the_image
-  
-  #This remaining of the file still needs to be commented.
-      
-  #*args is (1,exceptions) or (0)  
+
+  #The argument 'equivalence' is an EquivalenceRelation item while *args is
+  #either of the form (1,a_list_of_characters) or 0.
   def select(self,equivalence,*args):
+    #A new Pedigrad item is allocated in the memory. Since the name of the
+    #file passed in its first argument is empty, the objects .local and .taxa 
+    #of the variable 'new_pedigrad' are empty. Also, because the name of the
+    #preorder structure is empty, the object .mask is set to False and the
+    #the preorder is encoded by an empty list (this is rectified below).
     new_pedigrad = Pedigrad('',0,SEGM_MODE,self.base,self.equiv,'',self.domain)
+    #The following two lines reset the preorder structure to that of the
+    #ambient pedigrad. 
     new_pedigrad.mask = self.mask
     new_pedigrad.preorder = self.preorder
+    #The object .taxa is set to that of the ambient pedigrad
     new_pedigrad.taxa = self.taxa
+    #The variable 'partition' contains the underlying partition of the
+    #equivalence relation defined by 'equivalence'.
     partition = equivalence.quotient()
+    #This part deals with the case where 1 is the second input.
     if args[0] == 1:
+      #In this case, any segment of the base that is mapped to a partition 
+      #that originates from a list of strings that contains at least 
+      #one string in 'args[1]' is removed from the base. 
+      #To construct the new base, a space is allocated in the memory.
       new_base = list()
+      #The variable 'the_range' is used to store the elements appearing
+      #in the specification of the equivalence class 'equivalence'.
       the_range = list()
       for i in range(len(equivalence.classes)):
         the_range.extend(equivalence.classes[i])
+      #The following lines fill:
+      #- the list 'new_pedigrad.local' with the i-th segment of self.base;
+      #- the list 'new_base'  with the partition resulting from the product
+      #  of the i-th list of strings contained in self.local with the
+      #  underlying partition of 'equivalence',
+      #provided that the i-th list of strings in self.local do not contain
+      #strings in 'args[1]' at the indices contained in the list 'the_range'.
       for i in range(len(self.local)):
+        #The variable flag indicates indicates whether 'self.local[i]' contains
+        #a string that is in 'args[1]' at the indices contained in 'the_range'.
         flag = False
         for j in range(len(the_range)):
+          #If 'self.local[i]' contains a string that is in 'args[1]' at the
+          #indices contained in 'the_range', then flag is set to False.
           if self.local[i][the_range[j]] in args[1]:
             flag = True   
             break
         if flag == False:
+          #No string was matching with those contained in args[1]. Therefore
+          #product_of_partitions(self.local[i],partition) is added to the 
+          #object .local of the output pedigrad.
           new_pedigrad.local.append(product_of_partitions(self.local[i],partition))
+          #The associated segment is also added to the future .base of the
+          #output pedigrad.
           new_base.append(new_pedigrad.base[i])
         else:
           continue
-          #print("Except",Q.base[i].topology,self.local[i][the_range[j]])
+      #Once the list 'new_base' is completed, it is stored in the object 
+      #.base of the output pedigrad.
       new_pedigrad.base = new_base
+    #This part deals with the case where the second input is not 1.
+    #In this case, the object .base stays the same, but the object .local
+    #of the new pedigrad contains the product of equivalence.quotient()
+    #with the partitions contained the object .local of the ambient pedigrad.
     else:
       for i in range(len(self.local)):
         new_pedigrad.local.append(product_of_partitions(self.local[i],partition))
+    #The new pedigrad is returned with an updated .base and an updated .local
     return new_pedigrad
-    
-  def common(self,tree_base,pulling_condition):
-    the_common = list()
+
+  #The variable 'segments' is meant to be a list of SegmentObject items 
+  #while the variable pulling_condition is meant to be a list of 
+  #non-negative integers.
+  def agree(self,segments,pulling_condition):
+    #A space is allocated to memorize the output. The list 'agreeing_segments'
+    #will record all the segments whose images via the pedigrad (self) are
+    #equal to the list 'pulling_condition'.
+    agreeing_segments = list()
+    #Partitions are generally considered the same up to relabeling.
+    #Since the images of the pedigrad are always labeled according to
+    #the procedure _epi_factorize_partition, the list 'pulling_condition'
+    #should also be relabeled via the procedure _epi_factorize_partition.
     pulling_condition = _epi_factorize_partition(pulling_condition)
-    for i in range(len(tree_base)):
-      if self.partition(tree_base[i],SEGM_MODE) == pulling_condition:
-        the_common.append(tree_base[i])
-    return the_common
+    #The following loop collects the segments in the list 'segments'
+    #whose outputs via the procedure self.partition are equal to
+    #the relabeled list 'pulling_condition'.
+    for i in range(len(segments)):
+      if self.partition(segments[i],SEGM_MODE) == pulling_condition:
+        agreeing_segments.append(segments[i])
+    #The segments agreeing with the pulling condition are returned.
+    return agreeing_segments

@@ -48,10 +48,10 @@ from Pedigrad import *
 
 ## To import a non importable function from the library:
 
-Copy the following text in the appropriate section of Pedigrad.py and replace ```NameOfFile```, ```_non_importable_function``` and ```now_portable_function``` with the desired names.
+Copy the following text in the appropriate section of Pedigrad.py and replace ```NameOfModule```, ```_non_importable_function``` and ```now_portable_function``` with the desired names.
 
 ```
-    from NameOfFile import _non_importable_function
+    from NameOfModule import _non_importable_function
     def now_portable_function(*args):
       return _non_importable_function(*args)
 ```

@@ -35,7 +35,7 @@ from PedigradCategory import *
 
 #column_is_trivial(column,exceptions): Boolean
 
-#Pedigrad(LocalAnalysis): .local, .taxa, .partition, .select, .common
+#Pedigrad(LocalAnalysis): .local, .taxa, .partition, .select, .agree
 
 #REDUCE = 1
 

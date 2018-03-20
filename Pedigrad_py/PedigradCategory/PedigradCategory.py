@@ -23,4 +23,4 @@ from cl_ped import REDUCE
 #REDUCE = 1
 
 from cl_ped import Pedigrad
-#Pedigrad(LocalAnalysis): .local, .taxa, .partition, .select, .common
+#Pedigrad(LocalAnalysis): .local, .taxa, .partition, .select, .agree
