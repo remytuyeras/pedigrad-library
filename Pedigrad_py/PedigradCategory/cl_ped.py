@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------------
-#Pedigrad(LocalAnalysis): .local, .taxa, .partition, .select, .agree
+#Pedigrad(LocalAnalysis): .local, .taxa, .partition, .reduce, .agree
 #------------------------------------------------------------------------------
 '''
 This class is a subclass of LocalAnalysis that possesses two objects, namely
@@ -8,7 +8,7 @@ This class is a subclass of LocalAnalysis that possesses two objects, namely
 and two methods, namely
 -  .__init__ (constructor)
 -  .partition
--  .select
+-  .reduce
 -  .agree
 
 The consructor .__init__ takes the name of a file and an integer (as in the case of the function read_alignment_file) as well as a list of arguments that could be given to the constructor of LocalAnalysis (see __init__ in cl_la.py), except for the last argument that does not need to be given if the name of the file exists or the given name is actually empty. 
@@ -47,14 +47,14 @@ If no argument is given, then the procedure returns a terminal partition. Otherw
 This image is a partition that is computed as the product of the partitions in .local whose indices correspond to the indices of those segments in .base to which there is a morphism of segment from the input SegmentObject item.
 
 
-The method .select takes from 2 to 3 arguments and returns a Pedigrad item that can be seen as a restriction of the ambient pedigrad (self). Specifically, the method .select takes:
+The method .reduce takes from 2 to 3 arguments and returns a Pedigrad item that can be seen as a restriction of the ambient pedigrad (self). Specifically, the method .reduce takes:
 - an EquivalenceRelation item (see PartitionCategory/cl_er.py);
 - an integer;
-- and if the previous integer is 1, a list of characters.
+- and if the previous integer is 1, a list of elements.
 
 If the integer input is not 1, then the procedure returns a pedigrad whose images (i.e. the outputs of the method .partition) are equal to the categorical products of the images of the ambient pedigrad (for the same segment) with the underlying partition of the EquivalenceRelation item passed to the function.
 
-P.select(eq,0).partition(s) = P.partition(s) x u.quotient()
+P.reduce(eq,0).partition(s) = P.partition(s) x u.quotient()
 
 Broadly, this means that the partitions of the returned pedigrad gather those integers that:
 - are in non-trivial classes of the input RelationEquivalence item;
@@ -63,7 +63,7 @@ and isolate those integers that:
 - are in trivial classes of the input RelationEquivalence item;
 - or are not present in the input RelationEquivalence item;
 
-If the integer input is 1, then the procedure returns the same images as those returned when the second input is 0, except for those images that originate from columns of the alignment containing strings in the third output at the indices specified in the EquivalenceRelation item, in which case these images are all equal to the terminal partition.
+If the integer input is 1, then the procedure returns the same images as those returned when the second input is 0, except for those images that originate from columns of the alignment containing elements in the third output at the indices specified in the EquivalenceRelation item, in which case these images are all equal to the terminal partition.
 
 
 The method .agree takes a list of SegmentObjects items and a list of non-negative integers (i.e. a partition) and returns all those segments contained in the first input whose images are equal to the second input. Categorically, this corresponds to pulling back what can be seen as the restriction of the pedigrad on the first input along the obvious functor 1 --> Part(S) determined by the second input.
@@ -86,7 +86,7 @@ from pop import product_of_partitions
 from efp import _epi_factorize_partition
 from cl_er import EquivalenceRelation
 
-REDUCE = 1
+REMOVE = 1
 
 class Pedigrad(LocalAnalysis): 
   #The objects of the class are:
@@ -234,8 +234,8 @@ class Pedigrad(LocalAnalysis):
       return the_image
 
   #The argument 'equivalence' is an EquivalenceRelation item while *args is
-  #either of the form (1,a_list_of_characters) or 0.
-  def select(self,equivalence,*args):
+  #either of the form (1,a_list) or 0.
+  def reduce(self,equivalence,*args):
     #A new Pedigrad item is allocated in the memory. Since the name of the
     #file passed in its first argument is empty, the objects .local and .taxa 
     #of the variable 'new_pedigrad' are empty. Also, because the name of the
@@ -275,7 +275,7 @@ class Pedigrad(LocalAnalysis):
         #a string that is in 'args[1]' at the indices contained in 'the_range'.
         flag = False
         for j in range(len(the_range)):
-          #If 'self.local[i]' contains a string that is in 'args[1]' at the
+          #If 'self.local[i]' contains an element of 'args[1]' at one of the
           #indices contained in 'the_range', then flag is set to False.
           if self.local[i][the_range[j]] in args[1]:
             flag = True   
@@ -303,10 +303,10 @@ class Pedigrad(LocalAnalysis):
     #The new pedigrad is returned with an updated .base and an updated .local
     return new_pedigrad
 
-  #The variable 'segments' is meant to be a list of SegmentObject items 
+  #The variable 'ground' is meant to be a list of SegmentObject items 
   #while the variable pulling_condition is meant to be a list of 
   #non-negative integers.
-  def agree(self,segments,pulling_condition):
+  def agree(self,ground,pulling_condition):
     #A space is allocated to memorize the output. The list 'agreeing_segments'
     #will record all the segments whose images via the pedigrad (self) are
     #equal to the list 'pulling_condition'.
@@ -316,11 +316,11 @@ class Pedigrad(LocalAnalysis):
     #the procedure _epi_factorize_partition, the list 'pulling_condition'
     #should also be relabeled via the procedure _epi_factorize_partition.
     pulling_condition = _epi_factorize_partition(pulling_condition)
-    #The following loop collects the segments in the list 'segments'
+    #The following loop collects the segments from the list 'ground'
     #whose outputs via the procedure self.partition are equal to
     #the relabeled list 'pulling_condition'.
-    for i in range(len(segments)):
-      if self.partition(segments[i],SEGM_MODE) == pulling_condition:
-        agreeing_segments.append(segments[i])
+    for i in range(len(ground)):
+      if self.partition(ground[i],SEGM_MODE) == pulling_condition:
+        agreeing_segments.append(ground[i])
     #The segments agreeing with the pulling condition are returned.
     return agreeing_segments
