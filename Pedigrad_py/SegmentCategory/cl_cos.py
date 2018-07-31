@@ -1,16 +1,17 @@
 #------------------------------------------------------------------------------
 #CategoryOfSegments: .domain, .mask, .preorder, .can_switch_to, 
-#                    .homset_is_inhabited, .topology, .segment
+#                    .homset, .topology, .segment
 #------------------------------------------------------------------------------
 '''
 This class possesses three objects, namely
 - .domain (integer)
 - .mask (Boolean)
 - .preorder (list of lists)
-and five methods, namely
+and six methods, namely
 -  .__init__ (constructor)
 -  .can_switch_to
--  .homset_is_inhabited
+-  .identity
+-  .homset
 -  .topology
 -  .segment 
 
@@ -26,7 +27,9 @@ The constructor .__init__ takes two inputs, namely the name of file that contain
 
 The method .can_switch_to takes two strings that are meant to be the names of elements in the pre-ordered set and returns a Boolean value indicating whether the first string is greater than or equal to the second one with respect to the pre-order structure.
 
-The method .homset_is_inhabited takes two SegmentObject items and returns a Boolean value specifying if there is a morphism from the first one to the second one. Theoretically, this function parses the two segments as if the object .mask was set to the value True.
+The method .identity takes two SegmentObject items and returns a Boolean value indicating whether there is a morphism of segments from the first input to the second input.
+
+The method .homset takes two SegmentObject items and returns a Boolean value specifying if there is a morphism from the first one to the second one. Theoretically, this function parses the two segments as if the object .mask was set to the value True.
 
 The method .topology takes a list of 3-tuples and returns a list of 2-tuples. The input list is meant to encode a regular expression that describes the topology of a segment. The 3-tuples contained by the input list specifies
  - where a patch starts;
@@ -92,10 +95,17 @@ class CategoryOfSegments(object):
       #Otherwise, the procedure returns False.
       return (color2 in self.preorder[i])
 
+  #The following function uses the identity operator on lists to check
+  #that two input segments are equal, which means that their objects
+  #.topology and .colors have to be equal as python lists.
+  def identity(self,segment1,segment2):
+    return (segment1.topology == segment2.topology)\
+    and    (segment1.colors == segment2.colors)
+
   #The following function takes two SegmentObject items and returns
   #a Boolean value specifying if there is a morphism between them.
   #This function assumes that the object .mask contains the value True.
-  def homset_is_inhabited(self,source,target):
+  def homset(self,source,target):
     #The variable flag contains the output of the procedure. Unless
     #a problem is found in the construction of the morphism from 'source'
     #to 'target' the variable flag will be returned unmodified (i.e. = True)
@@ -109,7 +119,7 @@ class CategoryOfSegments(object):
     #For every patch in 'target', we try to find the group of patches 
     #in 'source' that are merged to that patch.
     for i in range(len(target.topology)):
-      #If we have not manage to find a patch in 'target'
+      #If we have not managed to find a patch in 'target'
       #that starts or finishes with the same position as the patch in 'source'
       #then the merging is not possible
       if j >= len(source.topology):
@@ -395,8 +405,3 @@ class CategoryOfSegments(object):
     #A new space is allocated in the memory to store the output
     the_segment = SegmentObject(the_topology,the_colors)
     return the_segment
-
-  
-  
-
-    

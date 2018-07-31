@@ -42,7 +42,7 @@ eq2.quotient() = [1, 1, 1, 0, 2, 3, 4, 0, 0, 1, 5, 6, 7, 8, 9, 1, 10, 11, 12]
 '''
 
 from jpop import _join_preimages_of_partitions
-
+from jpop import FAST
 
 class EquivalenceRelation:
   #The objects of the class are:
@@ -51,8 +51,8 @@ class EquivalenceRelation:
   #The following constructor takes between 1 and 2 arguments, 
   #the first one being a list and the second being an integer.
   def __init__(self,*args):
-    #The local function is_index allows us to check whether an variable contains
-    #an non-negative integer or not. It returns True if an non-negative integer
+    #The local function is_index allows us to check whether a variable contains
+    #a non-negative integer or not. It returns True if a non-negative integer
     #is given.
     def is_index(x):
       try: 
@@ -74,27 +74,28 @@ class EquivalenceRelation:
           if not(is_index(j)):
             print("Error: in EquivalenceRelation.__init__: the first input should be a list of lists of non-negative integers.")
             exit()
-          #Elements that appear several are only counted once.
+          #Elements that appear several times are only counted once.
           elif not(j in elements):
             elements.append(j)
       #The variable 'individuals' contains the number of distinct elements that
       #the first input contains.
       if elements != []:
         individuals = max(elements)
-        #If a second input is given, the following lines check that it is greater
-        #then or equal to the maximum index contained in the first input.
+        #If a second input is given, the following lines check that it 
+        #is greater then or equal to the maximum index contained in 
+        #the first input.
         if len(args) == 2:
           if args[1] < individuals:
             print("Error: in EquivalenceRelation.__init__: the given range is smaller than the maximum element of the given classes.")
             exit()
           else:
-            #If so, we want to assign the value of args[1] to the object .range.
-            #This is done by firs passing it 'individuals' and self.range (as
-            #shown below).
+            #If so, we want to assign the value of args[1] to the
+            #object .range. This is done by firs passing it 'individuals' 
+            #and self.range (as shown below).
             individuals = args[1]
-        #The object range contains the cardinal of the set on which the first input
-        #is defined while the object .classes stores the list of lists given in the
-        #first input.
+        #The object range contains the cardinal of the set on which the 
+        #first input is defined while the object .classes stores the 
+        #list of lists given in the first input.
         self.range = individuals
         self.classes = args[0]
       else:
@@ -116,7 +117,7 @@ class EquivalenceRelation:
   #.classes describes an actually equivalence relation (modulo the singleton
   #equivalence classes, which do not need to be specifid for obvious reasons).
   def closure(self):
-    self.classes = _join_preimages_of_partitions(self.classes,self.classes)
+    self.classes = _join_preimages_of_partitions(self.classes,self.classes,not(FAST))
     
   def quotient(self):
     #The quotient cannot be given if the lists contained in the object .classes

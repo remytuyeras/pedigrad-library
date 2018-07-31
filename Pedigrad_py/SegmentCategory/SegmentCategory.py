@@ -9,6 +9,6 @@ from cl_so import SegmentObject
 
 from cl_cos import CategoryOfSegments
 #CategoryOfSegments: .domain, .mask, .preorder, .can_switch_to, 
-#                    .homset_is_inhabited, .topology, .segment
+#                    .identity, .homset, .topology, .segment
 
 

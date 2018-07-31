@@ -10,6 +10,9 @@ from piop import _preimage_of_partition
 from jpop import _join_preimages_of_partitions
 #_join_preimages_of_partitions(preimage1,preimage2): list of lists
 
+from jpop import FAST
+#FAST = True
+
 from pp import print_partition
 #print_partition(partition): standard output
 
@@ -21,9 +24,6 @@ from cop import coproduct_of_partitions
 
 from pop import product_of_partitions
 #product_of_partitions(partition1,partition2): list
-
-from hii import homset_is_inhabited
-#homset_is_inhabited(source,target): Boolean
 
 from cl_mop import MorphismOfPartitions
 #MorphismOfPartitions: .arrow, .source, .target

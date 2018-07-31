@@ -6,7 +6,9 @@ This class possesses three objects, namely
 - .arrow (list)
 - .source (list)
 - .target (list)
-and a constructor .__init__. The consructor .__init__ takes two lists and stores, in the object .arrow, a list that describes, if it exists, the (unique) morphism of partitions from the first list (seen as a partition) to the second list (seen as a partition). The canonical epimorphisms associated with the partitions of the first and second input lists are stored in the objects .source and .target, respectively.
+and a constructor .__init__. The consructor .__init__ takes two lists as well as an optional argument and stores, in the object .arrow, the list that describes, if it exists, the (unique) morphism of partitions from the first input list (seen as a partition) to the second input list (seen as a partition). If the morphism does not exist, then the method returns an error message unless the value False was given as an input in the third argument.
+
+The canonical epimorphisms associated with the partitions of the first and second input lists are stored in the objects .source and .target, respectively.
 
 If we suppose that the two input lists are labeled in the same way as the procedure _epi_factorize_partition would (re)label them, then the list that is to be contained in the object .arrow is computed as the image of the product of the two lists, as illustrated in the following example.
 
@@ -41,7 +43,7 @@ class MorphismOfPartitions:
   #.arrow (list);
   #.source (list);
   #.target (list).
-  def __init__(self,source,target):
+  def __init__(self,source,target,*args):
     if len(source) == len(target):
       #Relabeling the source and target by using _epi_factorize_partition
       #will allow us to quickly know whether there is an arrow from the source
@@ -66,5 +68,8 @@ class MorphismOfPartitions:
         #We are only interested in the image (not the graph) of the function.
         self.arrow[i] = self.arrow[i][1] 
       else:
-        print("Error: in MorphismOfPartitions.__init__: source and target are not compatible.")
-        exit()
+        if args[0] == False:
+          exit()
+        else:
+          print("Error: in MorphismOfPartitions.__init__: source and target are not compatible.")
+          exit()

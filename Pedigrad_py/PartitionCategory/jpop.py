@@ -1,10 +1,10 @@
 #------------------------------------------------------------------------------
-#_join_preimages_of_partitions(preimage1,preimage2): list of lists
+#_join_preimages_of_partitions(preimage1,preimage2,speed_mode): list of lists
 #------------------------------------------------------------------------------
 '''
-This function takes a pair of lists of disjoint lists of indices (the indices should not be repeated and should range from 0 to a fixed positive integer) and returns the list of the maximal unions of internal lists that intersect within the concatenation of the two input lists (see below). 
+This function takes a pair of lists of disjoint lists of indices (the indices should not be repeated and should range from 0 to a fixed positive integer) as well as a Boolean and returns the list of the maximal unions of internal lists that intersect within the concatenation of the two input lists (see below). 
 
-In practice, the two input lists would be obtained as outputs of the procedure _preimage_of_partition(_,_) for two input lists of the same length.
+In practice, the two input lists would be obtained as outputs of the procedure _preimage_of_partition(_) for two input lists of the same length and the Boolean value would indicate whether one of the input lists may contain two different sublists with the same element. Note that the golabal variable FAST (which is equal to True) is specifically reserved to this use.
 
 e.g.
 Considering the following lists of lists of indices
@@ -17,18 +17,18 @@ we can notice that
 and
 [2] only intersects with [2]
 so that we have
-_join_preimages_of_partitions(p1,p2) = [[1, 4, 0, 3], [2]]
+_join_preimages_of_partitions(p1,p2,FAST) = [[1, 4, 0, 3], [2]]
 
-In terms of implementation, the procedure _join_preimages_of_partitions(p1,p2) considers each internal list of p1 and searches for the lists of p2 that intersect it. If an intersection is found between two internal lists, it merges the two internal lists in p1 and empties that of p2 (the list is emptied and *not* removed in order to preserve a coherent indexing of the elements of p2). The function continues until all the possible intersections have been checked.
+In terms of implementation, the procedure _join_preimages_of_partitions(p1,p2,FAST) considers each internal list of p1 and searches for the lists of p2 that intersect it. If an intersection is found between two internal lists, it merges the two internal lists in p1 and empties that of p2 (the list is emptied and *not* removed in order to preserve a coherent indexing of the elements of p2). The function continues until all the possible intersections have been checked.
 
-Here is a detail of what _join_preimages_of_partitions(p1,p2) does with respect to the earlier example:
+Here is a detail of what _join_preimages_of_partitions(p1,p2,FAST) does with respect to the earlier example:
 
 The element 0 of [0,3] is searched in the list [0,1] of p2;
 The element 0 is found;
 The lists [0,3] and [0,1] are merged in p1 and [0,1] is emptied from p2 as follows:
 p1 = [[0, 3, 1], [1, 4], [2]]
 p2 = [[], [2], [3], [4]];
-The element 0 has now been found in p2 and does not need to be searched again (breaks)
+Because the element 0 has now been found in p2 and the third input was set to FAST, no other sublist of p2 is supposed to contain the element 0 and the search of the element 0 stops here. Note that if not(FAST) were given in the third argument, then the earlier union operation would also be operated on the remaining sublists of p2 (e.g. because the sublists of p2 could still contain the element 0).
 
 The element 3 of [0, 3] is searched in the list [] of p2;
 The element 3 is not found (continues)
@@ -39,7 +39,7 @@ The element 3 is found;
 The lists [0,3] and [3] are merged in p1 and [3] is emptied from p2 as follows:
 p1 = [[0, 3, 1], [1, 4], [2]]
 p2 = [[], [2], [], [4]];
-The element 3 has now been found in p2 and does not need to be searched again (breaks)
+The element 3 has now been found in p2 and does not need to be searched again.
 
 All elements of the initial list [0, 3] have been searched.
 The first lists of p1 is appended to p2 in order to ensure the transitive computation of the maximal unions through the next interations. 
@@ -60,9 +60,12 @@ p2 = [[], [], [], [], [], [1, 4, 0, 3], [2]]
 The function stops because there is no more list to process in p1.
 The output is all the non-empty lists of p2; i.e. [[1, 4, 0, 3], [2]]
 '''
+
 from iop import _image_of_partition
 
-def _join_preimages_of_partitions(preimage1,preimage2):
+FAST = True
+
+def _join_preimages_of_partitions(preimage1,preimage2,speed_mode):
   #Spaces are allocated in the memory so that the lists saved at the addresses
   #of the variables 'preimage1' and 'preimage2' are not modified. 
   tmp1 = list()
@@ -70,17 +73,9 @@ def _join_preimages_of_partitions(preimage1,preimage2):
   #In addition, repetitions that may occur in each internal list of the 
   #two inputs are eliminated: e.g. [7,1,3,4,7] --> [7,1,3,4]
   for i in range(len(preimage1)):
-    intern1 = list()
-    for j in preimage1[i]:
-      if not(j in intern1):
-        intern1.append(j)
-    tmp1.append(intern1)
+    tmp1.append(_image_of_partition(preimage1[i]))
   for i in range(len(preimage2)):
-    intern2 = list()
-    for j in preimage2[i]:
-      if not(j in intern2):
-        intern2.append(j)
-    tmp2.append(intern2)
+    tmp2.append(_image_of_partition(preimage2[i]))
   #Reads preimage1;
   for i1 in range(len(tmp1)):
     #Reads in the i1-th internal lists of preimage1;
@@ -109,7 +104,7 @@ def _join_preimages_of_partitions(preimage1,preimage2):
             flag = True
             break
         #tmp1[i1][j1] no longer needs to be searched in preimage2.
-        if flag == True:
+        if speed_mode == FAST and flag == True:
           break
     #On the one hand, the union of the first internal list of preimage1 
     #with all the other internal lists of preimage2 that intersect 

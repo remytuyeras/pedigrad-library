@@ -1,6 +1,6 @@
 #----------------------------------------------------------------------------
 import sys
-sys.path.insert(0, 'Pedigrad_py/PartitionCategory/')
+sys.path.insert(0, '../Pedigrad_py/PartitionCategory/')
 from PartitionCategory import *
 
 #print_partition(partition): standard output
@@ -13,9 +13,13 @@ from PartitionCategory import *
 
 #MorphismOfPartitions: .arrow, .source, .target
 
+from PartitionCategory import _preimage_of_partition
+def preimage_of_partition(*args):
+  return _preimage_of_partition(*args)
+
 #----------------------------------------------------------------------------
 import sys
-sys.path.insert(0, 'Pedigrad_py/SegmentCategory/')
+sys.path.insert(0, '../Pedigrad_py/SegmentCategory/')
 from SegmentCategory import *
 
 #SegmentObject: .colors, .topology
@@ -25,7 +29,7 @@ from SegmentCategory import *
 
 #----------------------------------------------------------------------------
 import sys
-sys.path.insert(0, 'Pedigrad_py/PedigradCategory/')
+sys.path.insert(0, '../Pedigrad_py/PedigradCategory/')
 from PedigradCategory import *
 
 #READ_DNA = 1
@@ -53,7 +57,7 @@ from PedigradCategory import *
 
 #----------------------------------------------------------------------------
 import sys
-sys.path.insert(0, 'Pedigrad_py/AsciiTree/')
+sys.path.insert(0, '../Pedigrad_py/AsciiTree/')
 from AsciiTree import *
 
 #tree_of_partitions(partitions): list of MorphismOfPartitions
@@ -68,7 +72,7 @@ from AsciiTree import *
 
 #----------------------------------------------------------------------------
 import sys
-sys.path.insert(0, 'Pedigrad_py/Phylogeny/')
+sys.path.insert(0, '../Pedigrad_py/Phylogeny/')
 from Phylogeny import *
 
 #Phylogenesis: .taxon, .history, .partitions, .print_tree

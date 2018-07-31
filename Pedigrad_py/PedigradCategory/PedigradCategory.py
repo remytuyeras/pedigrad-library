@@ -19,8 +19,8 @@ from raf import READ_DNA
 from raf import read_alignment_file
 #read_alignment_file(name_of_file,reading_mode): 2-tuple
 
-from cl_ped import REMOVE
-#REMOVE = 1
+from cl_ped import NEW
+#NEW = 1
 
 from cl_ped import Pedigrad
 #Pedigrad(LocalAnalysis): .local, .taxa, .partition, .reduce, .agree

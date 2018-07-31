@@ -1,0 +1,2 @@
+!obj: read codr ncdr
+rel: read > codr; read > ncdr
