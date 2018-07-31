@@ -30,7 +30,7 @@ print_parsing_method(parse_coding)
 
 parse_ncoding = list()
 for i in range(Seg_ukn.domain):
-  if i % 2 ==0 and (i+1 < Seg_ukn.domain):
+  if (i+1 < Seg_ukn.domain):
     parse_ncoding.append(Seg_ukn.segment([(i,2,1,'ncdr')]))
 
 print_parsing_method(parse_ncoding)
@@ -196,18 +196,12 @@ for i in range(len(pgy.phylogeneses)):
     u = EquivalenceRelation([pgy.phylogeneses[i].history[j]],len(pgy.phylogeneses)-1)
     a = P_codr.agree(parse_ground,u.quotient())
     print(">" + str(pgy.phylogeneses[i].history[j]) + "(" + str(len(a))+")")
-    #for k in range(len(a)):
-    #  sys.stdout.write(str(a[k].topology)+" ")
-    #sys.stdout.flush()
-    #print("")
+    for k in range(len(a)):
+      print("... "+str(a[k].topology))
   print("Non-coding")
   for j in range(len(pgy.phylogeneses[i].history)):
     u = EquivalenceRelation([pgy.phylogeneses[i].history[j]],len(pgy.phylogeneses)-1)  
     b = P_ncdr.agree(parse_ground,u.quotient())
     print(">" + str(pgy.phylogeneses[i].history[j]) + "(" + str(len(b))+")")
-    #for k in range(len(b)):
-    #  sys.stdout.write(str(b[k].topology)+" ")
-    #sys.stdout.flush()
-    #print("")
-      
-
+    for k in range(len(b)):
+      print("... "+str(b[k].topology))
