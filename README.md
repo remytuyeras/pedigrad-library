@@ -2,12 +2,14 @@
 
 1. a python file: Pedigrad.py (headers)
 2. a pdf file: documentation.pdf (the documentation for the library)
-3. a directory: Pedigrad_py containing the modules: 
+3. a directory ```Pedigrad_py``` containing the modules: 
    * AsciiTree;
    * PartitionCategory;
    * PedigradCategory;
+   * Phylogeny;
    * and SegmentCategory.
-
+4. a directory ```User``` containing a tutorial
+5. a directory ```Truncation_method``` containing the truncation method used in the paper version of this project.
 
 ## To use the functions and classes of the library, you can follow one of the following installation procedures:
 
