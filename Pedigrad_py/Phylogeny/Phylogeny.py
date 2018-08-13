@@ -3,6 +3,6 @@ from cl_pgs import Phylogenesis
 
 from cl_pgy import Phylogeny
 #Phylogeny: .phylogeneses, .coalescent, .extend, .make_friends, 
-#.score, .choose, .set_up_competition, .compute
+#.score, .choose, .set_up_competition
 
 

@@ -1,0 +1,14 @@
+This directory contains the truncation method used in the research paper:
+"Category theory for genetics III: Natural selection, evolution and phylogeny"
+See Example 2.28 (ibid).
+
+For a description of the method, read the annotations given before the function
+truncation_method in the file truncate.py
+
+To compile, use: python truncate.py
+
+The mutation rate tables
+- Mammal_codingRatio.tab
+- Mammal_noncodingRatio.tab
+were taken from https://github.com/mlin/PhyloCSF/wiki
+

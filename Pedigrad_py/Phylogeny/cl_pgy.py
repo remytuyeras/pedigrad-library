@@ -5,7 +5,7 @@
 '''
 This class possesses one object, namely
 - .phylogeneses (Phylogenesis item)
-and thirteen methods, namely
+and ten methods, namely
 - .__init__ (constructor)
 - .coalescent
 - .extend
@@ -18,7 +18,8 @@ and thirteen methods, namely
 - .set_up_competition
 - .score_dominance
 - .choose_dominants
-- .compute (todo)
+
+
 
 The object .phylogenesis is supposed to contained a list of Phylogenesis items.
 The taxon associated with the i-th phylogenesis should be indexed by the interger i itself and any label appearing in the Phylogenesis items of the list should have its own Phylogenesis item in the list.
@@ -34,8 +35,9 @@ The method .coalescent() returns the list of the first generations (i.e the last
 
 
 The method .extend takes a list of pairs of the form (t,l) where t is the label of a taxon and l is a list of taxa and updates the object .phylogeneses as follows:
---> for all taxa t contained in the input of \texttt{.extend}: 
-  1) if all the lists l contains the last list of self.phylogeneses[t].history, if at least one of the lists l strictly contains the last list self.phylogeneses[t].history, and if the indices in the list l coupled with the taxa t are within the range of the list self.phylogeneses[t].pedigrad.taxa, then every list l is appended to the object .history of self.phylogeneses[t] and the value True is returned;
+--> for all pairs (t,l) contained in the input passed to .extend:
+1) if every list l contains the last list of self.phylogeneses[t].history and if at least one of the lists l strictly contains the last list of
+self.phylogeneses[t].history, then every list l is appended to the list self.phylogeneses[t].history and the value True is returned;
   2) if there is no strict inclusion of the last list of self.phylogeneses[t].history into l, then the object .phylogeneses is not modified and the value False is returned;
   3) otherwise, an error message is returned and the procedure exit the program;
 --> in any terminating case, for all other taxa t of the phylogeny that do not appear in the input of .extend, the last list of self.phylogeneses[t].history (i.e. the first generation of the history of the phylogenesis of t) is again repeated (i.e. appended again) in the list self.phylogeneses[t].history.
@@ -73,7 +75,7 @@ where we take
 
 x = EquivalenceRelation([hypotheses[t][r]],len(self.phylogeneses)-1)
 
-and 'exact' is the number of SegmentObject items that were counted in the large score for which either the equality hypotheses[t][r] = hypotheses[t][s] holds or the intersection of hypotheses[t][r] with hypotheses[t][s] is empty for every index s different from r that goes from 0 to len(hypotheses[t]). 
+and 'exact' is the number of partitions that were counted in the large score of r such that if these partitions belong to the large score of any other element s in friendships[t], then either the equality hypotheses[t][r] = hypotheses[t][s] holds or the intersection of hypotheses[t][r] with hypotheses[t][s] is empty.
 The second input of the method .score can, for instance, be taken to be the output of the procedure self.set_up_friendships().
 
 

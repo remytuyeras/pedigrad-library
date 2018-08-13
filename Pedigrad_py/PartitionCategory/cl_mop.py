@@ -68,7 +68,7 @@ class MorphismOfPartitions:
         #We are only interested in the image (not the graph) of the function.
         self.arrow[i] = self.arrow[i][1] 
       else:
-        if args[0] == False:
+        if len(args) > 0 and args[0] == False:
           exit()
         else:
           print("Error: in MorphismOfPartitions.__init__: source and target are not compatible.")
