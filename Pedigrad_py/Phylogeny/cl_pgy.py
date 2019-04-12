@@ -99,11 +99,6 @@ from cl_er import EquivalenceRelation
 from cl_mop import MorphismOfPartitions
 from efp import _epi_factorize_partition
 
-import sys
-sys.path.insert(0, 'Pedigrad_py/PedigradCategory/')
-from cl_ped import *
-
-
 class Phylogeny:
   #The objects of the class are:
   #.phylogeneses (lists of Phylogenesis items)

@@ -1,222 +1,242 @@
 from Pedigrad import *
 
-ribosome = read_alignment_file("ribosome.fa",READ_DNA)
+Omega = PreOrder("omega.yml")
+print(Omega.relations)
+print(Omega.mask)
+print(Omega.cartesian)
+Omega.closure()
+print("--after:")
+print(Omega.relations)
+print(Omega.mask)
+print("--relation:")
+print(Omega.geq('1','2'))
+print(Omega.geq('2','1'))
+print(Omega.geq('4','3'))
+print(Omega.geq('?','3'))
+print(Omega.geq('?','?'))
+print("--infimum:")
+print(Omega.inf('2','3'))
+print(Omega.inf('?','3'))
+print("--presence test:")
+print(Omega.presence('3'))
+print(Omega.presence('1'))
+print(Omega.presence('?'))
 
-indices = list()
-transpose = list()
-for i in range(len(ribosome[1][0])):
-  column = list()
-  for j in range(len(ribosome[1])):
-    column.append(ribosome[1][j][i])
-  if not(column_is_trivial(column,[])):
-    transpose.append(column)
-    indices.append(i)
+print("\n------------------------\n")
 
-Seg_rb = CategoryOfSegments("omega.yml",len(ribosome[1][0]))
+t = list()
+c = list()
+for i in range(20):
+  t = t + [(i,i)]
+  if i%15 in [11]:
+    c = c + ['?']
+  elif i%2 in [0]:
+    c = c + ['1']
+  elif i%2 in [1]:
+    c = c + ['2']
+s = SegmentObject(20,t,c)
+sys.stdout.write("s= ")
+s.display()
+print(s.colors)
 
-unknown = read_alignment_file("unknown.fa",READ_DNA)
-Seg_ukn = CategoryOfSegments("omega.yml",len(unknown[1][0]))
+s1 = s.merge([(0,3,9),(10,2,14)],Omega.inf)
+sys.stdout.write("s1= ")
+s1.display()
+print(s.colors)
 
-parse_coding = list()
-for i in range(Seg_ukn.domain):
-  if i % 3 ==0:
-    parse_coding.append(Seg_ukn.segment([(i,3,1,'codr')]))
+s2 = s.merge([(0,3,9),(10,2,14)],Omega.inf)
+sys.stdout.write("s2= ")
+s2.display()
+s2 = s2.remove([5,45])
+sys.stdout.write("s2= ")
+s2.display()
+#s2.colors = ['2']*len(s2.topology)
+s2.domain = s2.domain+4
+sys.stdout.write("s2= ")
+s2.display()
+print(s2.colors)
 
-def print_parsing_method(list_of_segments):
-  for i in range(len(list_of_segments)):
-    print(list_of_segments[i].topology,list_of_segments[i].colors)
+s3 = s.merge([(0,3,9),(10,2,14)],Omega.inf)
+sys.stdout.write("s3= ")
+s3.display()
+s3 = s3.remove([1,5,6,8,10])
+sys.stdout.write("s3= ")
+s3.display()
+s3.topology = s3.topology+[(24,24)]
+s3.colors = s3.colors+['5']
+#s3.colors = ['2']*len(s3.topology)
+s3.domain = s3.domain+5
+sys.stdout.write("s3= ")
+s3.display()
+print(s3.colors)
 
-print_parsing_method(parse_coding)
+m = MorphismOfSegments(s2,s3,'id',Omega.geq)
+print(m.defined)
+sys.stdout.write("s= ")
+m.source.display()
+sys.stdout.write("t= ")
+m.target.display()
+print("f0 = "+str(m.f0))
 
-parse_ncoding = list()
-for i in range(Seg_ukn.domain):
-  if (i+1 < Seg_ukn.domain):
-    parse_ncoding.append(Seg_ukn.segment([(i,2,1,'ncdr')]))
+#Show happens when on removes ! in the file.
 
-print_parsing_method(parse_ncoding)
+print("\n------------------------\n")
 
-parse_ground0 = list()
-parse_ground1 = list()
-for i in range(Seg_ukn.domain):
-  if i % 3 ==0 and (i+2 < Seg_ukn.domain):
-    parse_ground0.append(Seg_ukn.segment([(i,2,1,'read'),(i+2,1,1,'read')]))
-  if i % 3 == 0 and (i+2 < Seg_ukn.domain):
-    parse_ground1.append(Seg_ukn.segment([(i,1,1,'read'),(i+1,2,1,'read')]))
-parse_ground = parse_ground0 + parse_ground1
 
-print_parsing_method(parse_ground)
+Seg = CategoryOfSegments(Omega)
 
-Loc_rb = LocalAnalysis(NUCL_MODE,'read',"omega.yml",Seg_rb.domain)
+s = Seg.initial(18,'1')
+s = s.merge([(2,2,8)],Omega.inf)
 
-for i in range(len(Loc_rb.base)):
-  print("segment " + str(i+1) + ": " + str(Loc_rb.base[i].topology) + " " + str(Loc_rb.base[i].colors) + " ---> " + str(ID_to_EQ(Loc_rb.equiv[i])))
+print(Seg.identity(s,s))
 
-N01_EQ.extend([["ATA","GTG"],["CTA","TTG"],["TTA","CTG"]])
+t = Seg.initial(20,'1')
+t = t.merge([(2,3,10),(15,2,18)],Omega.inf)
 
-equiv_coding = list()
-for i in range(len(parse_coding)):
-  equiv_coding.append(N01_ID)
+print(Seg.identity(s,t))
 
-Loc_coding =LocalAnalysis(SEGM_MODE,parse_coding,equiv_coding,"omega.yml",Seg_ukn.domain)
+s.display()
+t.display()
 
-for i in range(len(Loc_coding.base)):
-  print("segment " + str(i+1) + ": " + str(Loc_coding.base[i].topology) + " " + str(Loc_coding.base[i].colors) + " ---> " + str(ID_to_EQ(Loc_coding.equiv[i])))
+#t = s
+h = Seg.homset(s,t)
+for i in range(len(h)):
+  print(str(i)+") well-defined = "+str(h[i].defined))
+  sys.stdout.write("s= ")
+  s.display()
+  sys.stdout.write("t= ")
+  t.display()
+  print("f1 = "+str(h[i].f1))
+  print("f0 = "+str(h[i].f0))
 
-N02_EQ.extend([["CA","TG"]])
+print("\n------------------------\n")
 
-equiv_ncoding = list()
-for i in range(len(parse_ncoding)):
-  equiv_ncoding.append(N02_ID)
+E = PointedSet(['-','A','C','G','T'],0)
 
-Loc_ncoding = LocalAnalysis(SEGM_MODE,parse_ncoding,equiv_ncoding,"omega.yml",Seg_ukn.domain)
+Env = Environment(Seg,E,5,['4']*5) #[] = white nodes
+print(Env.Seg.preorder.relations)
+print(Env.pset.symbols)
+print(Env.pset.point())
+print(Env.spec)
+print(Env.b)
 
-for i in range(len(Loc_ncoding.base)):
-  print("segment " + str(i+1) + ": " + str(Loc_ncoding.base[i].topology) + " " + str(Loc_ncoding.base[i].colors) + " ---> " + str(ID_to_EQ(Loc_ncoding.equiv[i])))
+s4 = Env.segment(['A','C','G','T','T','P','C','A','-','C','T'],'1')
+s4.display()
 
-P_rb = Pedigrad("ribosome.fa",READ_DNA,NUCL_MODE,'read',"omega.yml")
+print("\n------------------------\n")
 
-for i in range(len(P_rb.local)):
-  print("segment " + str(P_rb.base[i].topology) + " "+ str(P_rb.base[i].colors) + " ---> " +str(P_rb.local[i]))
+names,alignments = usf.fasta("align.fa")
+print(names)
+for i in range(len(alignments)):
+  print(alignments[i])
 
-print(P_rb.partition([(5,1,1,'read')],EXPR_MODE))
-print(P_rb.partition([(5,1,1,'read'),(6,1,1,'read')],EXPR_MODE))
-print(P_rb.partition([(5,1,1,'read'),(9,1,1,'read')],EXPR_MODE))
+print("\n------------------------\n")
 
-Q = P_rb.isolate(NEW,['C'])
+Seqali = Env.seqali("align.fa")
+print(Seqali.Seg.preorder.relations)
+print(Seqali.Seg.preorder.cartesian)
 
-for i in range(len(Q.local)):
-  print("segment " + str(Q.base[i].topology)+ " "+ str(Q.base[i].colors) + " ---> " +str(Q.local[i]))
+print("\nDatabase\n") 
 
-print(Q.partition([(5,1,1,'read')],EXPR_MODE))
-print(Q.partition([(5,1,1,'read'),(6,1,1,'read')],EXPR_MODE))
-print(Q.partition([(5,1,1,'read'),(9,1,1,'read')],EXPR_MODE))
+print(Seqali.indiv)
+for i in range(len(Seqali.base)):
+  print(str(i)+") color: "+str(Seqali.base[i].colors[Seqali.base[i].parse]))
+  Seqali.base[i].display()
+  for j in range(len(Seqali.database[i])):
+    for k in range(len(Seqali.database[i][j])):
+      print(Seqali.database[i][j][k])
+    print("")
 
-P_codr = Pedigrad("unknown.fa",READ_DNA,SEGM_MODE,parse_coding,equiv_coding,"omega.yml")
-P_ncdr = Pedigrad("unknown.fa",READ_DNA,SEGM_MODE,parse_ncoding,equiv_ncoding,"omega.yml")
+print("\nImage\n")  
 
-for i in range(len(P_codr.local)):
-  print("segment " + str(P_codr.base[i].topology) + " "+ str(P_codr.base[i].colors) + " ---> " +str(P_codr.local[i]))
+Seqali.base[0].display()
+sal = Seqali.eval(Seqali.base[0])
+for j in range(len(sal)):
+  for k in range(len(sal[j])):
+    print(sal[j][k])
+  print("")
 
-for i in range(len(P_ncdr.local)):
-  print("segment " + str(P_ncdr.base[i].topology) + " "+ str(P_ncdr.base[i].colors) + " ---> " +str(P_ncdr.local[i]))
 
-print(P_codr.partition([(0,2,1,'read'),(2,1,1,'read')],EXPR_MODE))
-print(P_ncdr.partition([(0,2,1,'read'),(2,1,1,'read')],EXPR_MODE))
+Seqali.base[1].display()
+sal = Seqali.eval(Seqali.base[1])
+for j in range(len(sal)):
+  for k in range(len(sal[j])):
+    print(sal[j][k])
+  print("")
 
-print("\n{{Alignment}}\n")
-for i in range(len(P_rb.local)):
-  print("Segment "+str(P_rb.base[i].topology)+ " ---> " + str(preimage_of_partition(P_rb.local[i])))
-
-p = list()
-for i in range(len(P_rb.taxa)):
-  p.append([[i]])
-pgy = Phylogeny(p)
-
-print("\n{{Mathematical phylogeny}}\n")
-for i in range(len(pgy.phylogeneses)):
-  print(P_rb.taxa[i] + " = " + str(pgy.phylogeneses[i].history))
-
-keep_going = True
-
-#if keep_going:
-while(keep_going):
-
-  print("\n{{Set up friendship}}\n")
-  friendship =  pgy.set_up_friendships()
-  for i in range(len(P_rb.taxa)):
-    print("----->"+str(P_rb.taxa[i])+"'s network: ")
-    for j in range(len(friendship[0][i])):
-      print("> common ancestor with " + str(P_rb.taxa[friendship[0][i][j]]) + ": "+ str(friendship[1][i][j]))
-      
-  print("\n{{Score friendship}}\n")
-  scores = pgy.score(P_rb.local,pgy.set_up_friendships())
-  for i in range(len(scores)):
-    print("----->"+ str(P_rb.taxa[i]))
-    for j in range(len(scores[i])):
-      print(">" + str(P_rb.taxa[scores[i][j][0]]) + ": L = "+str(8+scores[i][j][1]) + ", E = "+str(scores[i][j][2]))
-      
-  print("\n{{Choose friendship}}\n")
-  choose_friends = pgy.choose(scores)
-  for i in range(len(choose_friends)):
-    print("----->"+ str(P_rb.taxa[i])+"'s closet relative(s): ")
-    for j in range(len(choose_friends[i])):
-      print(">" + str(P_rb.taxa[choose_friends[i][j]]))
-
-  print("\n{{Set up competition}}\n")
-  competition =  pgy.set_up_competition(choose_friends)
-  for i in range(len(competition)):
-    print("----->"+str(P_rb.taxa[i])+"'s team: ")
-    for j in range(len(competition[i])):
-      print(">" + str(P_rb.taxa[competition[i][j]]))
-  adjusted_competition = ([range(len(competition))],[competition])  
-
-  print("\n{{Score competition}}\n")
-  scores = pgy.score(P_rb.local,adjusted_competition)
-  #print(scores)
-  for j in range(len(scores[0])):
-    print(">" + str(P_rb.taxa[scores[0][j][0]]) + ": L = "+str(8+scores[0][j][1]) + ", E = "+str(scores[0][j][2]))
+print("\nExtending diagram\n")  
+l= Seqali.extending_diagram(Seqali.base[0])
+for i,m in l:
+  print(i)
+  print(m.f1)
+  print(m.f0)
+  m.source.display()
+  m.target.display()
   
-  print("\n{{Choose competition}}\n")
-  choose_competitors = pgy.choose(scores)
-  c = list()
-  for i in range(len(choose_competitors[0])):
-    c.append((choose_competitors[0][i],competition[choose_competitors[0][i]]))
-    print("----->"+P_rb.taxa[choose_competitors[0][i]]+"'s winners: ")
-    for j in range(len(competition[choose_competitors[0][i]])):
-      print(">"+P_rb.taxa[competition[choose_competitors[0][i]][j]])
+print("\nExtending diagram\n")  
+l= Seqali.extending_diagram(Seqali.base[1])
+for i,m in l:
+  print(i)
+  print(m.f1)
+  print(m.f0)
+  m.source.display()
+  m.target.display()
   
-  print("\n{{Extension}}\n")
-  keep_going = pgy.extend(c)
-  print("CONTINUE: "+str(keep_going))
+#Show happens when one removes ! in the file.
 
-  #Display current phylogeny
-  if keep_going == True:
-    for i in range(len(pgy.phylogeneses)):
-      print("\nTree for " + str(P_rb.taxa[pgy.phylogeneses[i].taxon])+":")
-      try:
-        pgy.phylogeneses[i].print_tree()
-      except:
-        {}
+print("\n------------------------\n")
 
-print("\n{{Phylogeny}}")
-for i in range(len(pgy.phylogeneses)):
-  print("\nTree for " + str(P_rb.taxa[pgy.phylogeneses[i].taxon])+":")
-  pgy.phylogeneses[i].print_tree()
+a = usf.string_to_list('AGCTAGCTGA')
+b = usf.string_to_list('GTGGATCGATGA')
 
-print("\n{{Mathematical phylogeny}}\n")
-for i in range(len(pgy.phylogeneses)):
-  print(P_rb.taxa[i] + " = " + str(pgy.phylogeneses[i].history))
+A = Sequence('a',a,'1')
+B = Sequence('b',b,'1')
 
-print("\n{{Agreements}}\n")
-for i in range(len(pgy.phylogeneses)):
-  print("----->"+P_rb.taxa[i])
-  print("Coding")
-  for j in range(len(pgy.phylogeneses[i].history)):
-    u = EquivalenceRelation([pgy.phylogeneses[i].history[j]],len(pgy.phylogeneses)-1)
-    a = P_codr.agree(parse_ground,u.quotient())
-    print(">" + str(pgy.phylogeneses[i].history[j]) + "(" + str(len(a))+")")
-    #for k in range(len(a)):
-    #  print("... "+str(a[k].topology))
-  print("Non-coding")
-  for j in range(len(pgy.phylogeneses[i].history)):
-    u = EquivalenceRelation([pgy.phylogeneses[i].history[j]],len(pgy.phylogeneses)-1)  
-    b = P_ncdr.agree(parse_ground,u.quotient())
-    print(">" + str(pgy.phylogeneses[i].history[j]) + "(" + str(len(b))+")")
-    #for k in range(len(b)):
-    #  print("... "+str(b[k].topology))
+table = Table(A,B)
+print("\nincidence")
+table.incidence()
+table.stdout()
+print("\nfillout") 
+table.fillout() 
+table.stdout()
+table.dynamic_programming("dprog.fa",option = "w",debug = False,display = True)
 
-print("\n{{Region reconstruction}}\n")
+print("\n------------------------\n")
 
-p1 = P_ncdr.partition([(0,2,1,'read')],EXPR_MODE)
-p3 = P_ncdr.partition([(2,2,1,'read')],EXPR_MODE)
-p5 = P_ncdr.partition([(4,2,1,'read')],EXPR_MODE)
-p135 = product_of_partitions(p1,product_of_partitions(p3,p5))
+E = PointedSet(['-','A','C','G','T'],0)
 
-print(str(preimage_of_partition(p135))+"\n  = "+str(preimage_of_partition(p1))+"\n  x "+str(preimage_of_partition(p3))+"\n  x "+str(preimage_of_partition(p5)))
+Env = Environment(Seg,E,2,['1']*2) #[] = white nodes
+Seqali = Env.seqali("dprog.fa")
 
-pp = P_ncdr.partition([(0,2,1,'read'),(2,1,2,'read'),(4,2,1,'read')],EXPR_MODE)
-print("P(tau_prime) = " + str(preimage_of_partition(pp)))
+print("\nDatabase\n") 
 
-u = EquivalenceRelation([[0,1]],len(pgy.phylogeneses)-1)
-print("\n"+str(u.quotient()) + " ---> "+ str(pp) + "?")
-MorphismOfPartitions(u.quotient(),pp)
+print(Seqali.indiv)
+for i in range(len(Seqali.base)):
+  print(str(i)+") color: "+str(Seqali.base[i].colors[Seqali.base[i].parse]))
+  Seqali.base[i].display()
+  for j in range(len(Seqali.database[i])):
+    for k in range(len(Seqali.database[i][j])):
+      print(Seqali.database[i][j][k])
+    print("")
+    
+print("\nExtending diagram\n")
+l= Seqali.extending_diagram(Seqali.base[0])
+for i,m in l:
+  print(i)
+  print(m.f1)
+  print(m.f0)
+  m.source.display()
+  m.target.display()
+  for j in range(len(Seqali.database[i])):
+    for k in range(len(Seqali.database[i][j])):
+      print(Seqali.database[i][j][k])
+    print("")
+    
+print("\nImage\n")  
+
+Seqali.base[0].display()
+sal= Seqali.eval(Seqali.base[0])
+for j in range(len(sal)):
+  for k in range(len(sal[j])):
+    print(sal[j][k])
+  print("")

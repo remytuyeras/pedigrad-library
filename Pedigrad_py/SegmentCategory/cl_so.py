@@ -1,53 +1,221 @@
 #------------------------------------------------------------------------------
-#SegmentObject: .colors, .topology, .patch
+#SegmentObject (Sublass) | 4 objects | 6 methods
 #------------------------------------------------------------------------------
 '''
-This class possesses two objects, namely
-- .topology (list of 2-tuples)
-- .colors (list of indices);
-and two methods, namely
--  .__init__ (constructor)
--  .patch
+[Objects] 
+  .domain   [Type] int
+  .topology [Type] list(int * int)
+  .colors   [Type] list('a)
+  .parse    [Type] int
 
-The idea of behind the two objects .colors and .topology is that they contain all the needed information to define a mathetical segment given by a pair (t,c) where t is the 'topology', usually encoded by an order preserving surjection, and c is the coloring map, usually encoded by a functor going to a pre-ordered set. 
+[Methods] 
+  .__init__
+        [Inputs: 3]
+          - domain    [Type] int
+          - topology  [Type] list(int * int)
+          - colors    [Type] list('a)
+        [Outputs: 0]
+  ._start
+        [Inputs: 0]
+        [Outputs: 0]
+  .patch
+        [Inputs: 2]
+          - position  [Type] int
+          - search    [Type] string
+        [Outputs: 1]
+          - return    [Type] int
+  .display
+        [Inputs: 0]
+        [Outputs: 0]
+  .merge
+        [Inputs: 2]
+          - folding_format  [Type] list(int * int * int)
+          - infimum         [Type] fun: 'a * 'a -> 'a
+        [Outputs: 1]
+          - return          [Type] SegmentObject
+  .remove
+        [Inputs: 2]
+          - a_list  [Type] list
+          - option  [Type] string
+        [Outputs: 1]
+          - return  [Type] SegmentObject
+                          
+[General description] 
+  This structure models the features of segments (as defined in CGTI). A segment can be seen as a tape equipped with a read head, whose position is stored in the object [parse] and is displayed through the method [display] as a red node. The method [patch] allows one to return the index of the patch (an area in brackets) that contains a node whose position is given as an input. Note that the method [patch] starts searching the index associated with the node from where the read head is and only goes in a direction (left or right) specified through its second input; the method [merge] takes a tiling of the domain of the segment and merges groups of patches that share the same tiles. The tiling patterns are specified in a list of triples, where each triple gives a start index, a tile length, and an end index for each tiling pattern considered; the method [remove] removes either a node or a patch (from the segment) at the index given in the first argument depending on whether the second argument is equal to 'nodes-given' or is not specified.
+    
+>>> Method: .__init__
+  [Actions]
+    .level    <- use()
+    .domain   <- use(domain)
+    .topology <- use(topology)
+    .colors   <- use(colors)
+    .parse    <- use()
+  [Description] 
+    This method is the constructor of the class.
 
-c = [0,1,1,0,0]
-t = [(0,2), (3,5), (6,8), (9,11), (12,14)]
+>>> Method: ._start
+  [Actions] 
+    .parse  <- use(self.parse,self.topology)
+  [Description] 
+    Sets the read head to index 0 if the read head is outside of the 
+  segment domain.
 
-s = SegmentObject(t,c)
+>>> Method: .patch
+  [Actions] 
+    return  <- use(self.parse,self.topology,position,search)
+  [Description] 
+    Returns the index of a patch, or a node, or -1 if none is found.
+   
+>>> Method: .display
+  [Actions] 
+    sys.stdout  <- use(self._start,self.parse)
+  [Description] 
+    Displays the segment.
 
-For its part, the pre-ordered set associated with a segment can be specified through the classs CategoryOfSegments (see cl_cos.py).
+>>> Method: .display
+  [Actions] 
+    sys.stdout  <- use(self._start,self.parse)
+  [Description] 
+    Displays the segment on the standard output.
 
-The constructor .__init__ takes two lists, specifically a lists of indices and a list of pairs of increasing indices, and allocate them in the object .colors and .topology, respectively
+>>> Method: .merge
+  [Actions] 
+    return  <- use(self.domain,self.topology,self.colors,self.__init__)
+  [Description] 
+    Merges patches together according to a tiling structure on the segment.
 
-The other method .patch takes an integer and returns the index of the first pair (a,b) of .topology that bounds the integer, that is to say that the input integer is greater than or equal to the first component 'a' and  also is less than or equal to the second component 'b'. If no such index exists, then the procedure returns -1.
-
+>>> Method: .remove
+  [Actions] 
+    return  <- use(self.domain,self.topology,self.colors,self.__init__)
+  [Description] 
+    Removes patches (option = 'patches-given') or nodes (option = 'nodes-given')
+  from the segment.  
 '''
+#------------------------------------------------------------------------------
+#Dependencies: sys
+#------------------------------------------------------------------------------
+import sys
 
-class SegmentObject: 
-  #The objects of the class are:
-  #.topology (list of 2-tuples);
-  #.colors (list of indices);
-  def __init__(self,topology,colors):
+sys.path.insert(0, '../Useful/')
+from cat import CategoryItem
+#------------------------------------------------------------------------------
+#CODE
+#------------------------------------------------------------------------------
+class SegmentObject(CategoryItem):
+#------------------------------------------------------------------------------ 
+  def __init__(self,domain,topology,colors):
+    super(SegmentObject, self).__init__(0)
     if len(colors) == len(topology):
-    #This constructor only assignments values that already exist in the memory.
-      self.colors = colors
+      self.domain = domain
       self.topology = topology
+      self.colors = colors
+      self.parse = 0
     else:
       print("Error: in SegmentObject.__init__: lengths do not match.")
       exit()
-  #The following method takes a position within the domain of segment and 
-  #returns the index of the patch in which it lives in the segment structure. 
-  #This index also corresponds to the image of the position through the 
-  #topology of the segment. If the position is not found, the value -1 is returned.
-  def patch(self,position):
-    the_index = -1
-    #Looks for the position in the topology
-    for i in range(len(self.topology)):
-      if self.topology[i][0] <= position <= self.topology[i][1]:
-        #The index of the list in which 'position' appears is saved
-        the_index = i
+#------------------------------------------------------------------------------  
+  def _start(self):
+    if 0 > self.parse or self.parse >= len(self.topology):
+      self.parse = 0
+#------------------------------------------------------------------------------  
+  def patch(self,position,search = ">1"):
+    self._start()
+    if 0 > position or position >= self.domain:
+      return -1
+    while 0<= self.parse < len(self.topology):
+      if position < self.topology[self.parse][0]:
+        if search[0] == '<':
+          self.parse -= int(search[1:])
+        else:
+          return -1
+      elif position > self.topology[self.parse][1]:
+        if search[0] == '>':
+          self.parse += int(search[1:])
+        else:
+          return -1
+      else:
+        return self.parse
         break
-    #Either the index of the patch associated with 'position' is returned 
-    #or -1 is returned if there is no such index.
-    return the_index
+    return -1
+#------------------------------------------------------------------------------
+  def display(self):
+    self._start()
+    saved_parse = self.parse
+    prec_value = -1
+    self.parse = 0
+    sys.stdout.write('(')
+    for i in range(self.domain):
+      value = self.patch(i)
+      if i == 0:
+        prec_value = value
+      elif prec_value != value:
+        prec_value = value
+        sys.stdout.write('|')
+      if value != -1:
+        if self.parse == saved_parse:
+          sys.stdout.write('\033[91m\033[1mo\033[0m')
+        else:
+          sys.stdout.write('\033[1mo\033[0m')
+      else:
+        sys.stdout.write('o')
+    sys.stdout.write(')\n')
+    self.parse = saved_parse 
+#------------------------------------------------------------------------------  
+  def merge(self,folding_format,infimum):
+    new_topology = list()
+    new_colors = list()
+    initial = 0
+    final = 0
+    step = 0
+    while step < len(folding_format):
+      start,modulo,end = folding_format[step]
+      initial = max(start,initial)
+      new_topology = new_topology + self.topology[final:initial]
+      new_colors = new_colors + self.colors[final:initial]
+      if initial >= len(self.topology):
+        break
+      final = min(max(initial,end+1),len(self.topology))
+      saved_pos = 0
+      saved_color = ''
+      for i in range(initial,final):
+        #Look for masked patches within the tiling
+        if i+1 < len(self.topology) \
+        and (self.topology[i+1][0] - self.topology[i][1] > 1):
+          saved_color = True
+        #If no color has been attributed yet (first color)
+        if saved_color == '':
+          saved_color = self.colors[i]
+        #Otherwise, take the infimum with the previous color
+        else:
+          saved_color = infimum(self.colors[i],saved_color)
+        if i % modulo == initial % modulo:
+          saved_pos = self.topology[i][0]
+        if i % modulo == (initial-1) % modulo or i == final-1:
+          if saved_color != True:
+            new_topology.append((saved_pos,self.topology[i][1]))
+            new_colors.append(saved_color)
+            saved_color = ''
+      if step == len(folding_format)-1:
+        new_topology = new_topology + self.topology[final:]
+        new_colors = new_colors + self.colors[final:]
+      initial = final+1
+      step += 1
+    return SegmentObject(self.domain,new_topology,new_colors)
+#------------------------------------------------------------------------------    
+  def remove(self,a_list, option = 'patches-given'):
+    new_topology = list()
+    new_colors = list()
+    removed_patches = list()
+    for i in range(len(a_list)):
+      if option == 'nodes-given':
+        p = self.patch(a_list[i])
+      else:
+        p = a_list[i]
+      if 0<= p < len(self.topology):
+        removed_patches.append(p)
+    for i in range(len(self.topology)):
+      if not(i in removed_patches):
+        new_topology.append(self.topology[i])
+        new_colors.append(self.colors[i])
+    return SegmentObject(self.domain,new_topology,new_colors)
+#------------------------------------------------------------------------------  
