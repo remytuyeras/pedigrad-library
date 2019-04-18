@@ -139,27 +139,60 @@ class SegmentObject(CategoryItem):
     return -1
 #------------------------------------------------------------------------------
   def display(self):
-    self._start()
-    saved_parse = self.parse
-    prec_value = -1
-    self.parse = 0
+    #In any cases
     sys.stdout.write('(')
-    for i in range(self.domain):
-      value = self.patch(i)
-      if i == 0:
-        prec_value = value
-      elif prec_value != value:
-        prec_value = value
-        sys.stdout.write('|')
-      if value != -1:
-        if self.parse == saved_parse:
-          sys.stdout.write('\033[91m\033[1mo\033[0m')
+    
+    if len(self.topology)>0:
+      #How to display segments with a long masked start patch 
+      if self.topology[0][0] < self.domain: #Should happen
+        if self.topology[0][0] > 10:
+          sys.stdout.write('o-'+str(self.topology[0][0]-1)+'-o')
         else:
-          sys.stdout.write('\033[1mo\033[0m')
+          for i in range(self.topology[0][0]):
+            sys.stdout.write('o')
+      else: #Special case where the whole segment is masked
+        if self.domain > 11:
+          sys.stdout.write('o-'+str(self.domain-2)+'-o')
+        else: #Bottleneck case w/t the normal case
+          for i in range(self.domain):
+            sys.stdout.write('o')
+      if 0 < self.topology[0][0] < self.domain:
+        sys.stdout.write('|')
+        
+      #Display the inside of the segment 
+      self._start()
+      saved_parse = self.parse
+      prec_value = -1
+      self.parse = 0
+      i = self.topology[0][0]
+      while i <= min(self.domain-1,self.topology[len(self.topology)-1][1]):
+        value = self.patch(i)
+        if i == self.topology[0][0]:
+          prec_value = value
+        elif prec_value != value:
+          prec_value = value
+          sys.stdout.write('|')
+        if value != -1:
+          if self.parse == saved_parse:
+            sys.stdout.write('\033[91m\033[1mo\033[0m')
+          else:
+            sys.stdout.write('\033[1mo\033[0m')
+        else:
+          sys.stdout.write('o')
+        i += 1
+        
+      #How to display segments with a long masked end patch 
+      if self.domain-self.topology[len(self.topology)-1][1]-1> 11:
+        sys.stdout.write('|o-'+str(self.domain-self.topology[len(self.topology)-1][1]-3)+'-o')
       else:
-        sys.stdout.write('o')
+        for i in range(self.domain-self.topology[len(self.topology)-1][1]-1):
+          if i == 0:
+            sys.stdout.write('|')
+          sys.stdout.write('o')
+          
+      #In any cases       
+      self.parse = saved_parse
     sys.stdout.write(')\n')
-    self.parse = saved_parse 
 #------------------------------------------------------------------------------  
   def merge(self,folding_format,infimum):
     new_topology = list()
@@ -194,11 +227,12 @@ class SegmentObject(CategoryItem):
           if saved_color != True:
             new_topology.append((saved_pos,self.topology[i][1]))
             new_colors.append(saved_color)
-            saved_color = ''
+          #Repeat the same process if the tiling continues  
+          saved_color = ''
       if step == len(folding_format)-1:
         new_topology = new_topology + self.topology[final:]
         new_colors = new_colors + self.colors[final:]
-      initial = final+1
+      initial = final
       step += 1
     return SegmentObject(self.domain,new_topology,new_colors)
 #------------------------------------------------------------------------------    
@@ -211,6 +245,7 @@ class SegmentObject(CategoryItem):
         p = self.patch(a_list[i])
       else:
         p = a_list[i]
+      #Avoid the value p = -1
       if 0<= p < len(self.topology):
         removed_patches.append(p)
     for i in range(len(self.topology)):

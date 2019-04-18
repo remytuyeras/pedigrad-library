@@ -1,25 +1,45 @@
 #------------------------------------------------------------------------------
-#Tree:
+#Table (Class) | 3 objects | 9 methods
 #------------------------------------------------------------------------------
 '''
+[Objects] 
+  .name [Type] type
 
+[Methods] 
+  .name
+        [Inputs: ]
+          - name [Type] type
+        [Outputs: ]
+          - name [Type] type
+           
+[General description] 
+  This structure models the features of a score table for the purpose of Dynamic programming. In particular, it encodes the dynamic programming algorithm required to be able to do the type of analysis discussed in CTGI for mechanism recognition.
+    
+>>> Method: .name
 
+  [Actions] 
+    .object  <- use(class & arg)
+    .output <- use(class & arg)
+  
+  [Description] 
+    This method
 
 
 '''
-
-
+#------------------------------------------------------------------------------
+#Dependencies: current, sys
+#------------------------------------------------------------------------------
 import sys
 from cl_tre import Tree
-
 
 import sys
 sys.path.insert(0, '../Useful/')
 from usf import usf
-
-
+#------------------------------------------------------------------------------
+#CODE
+#-----------------------------------------------------------------------------
 class Table(object):
-  #----------------------------------------------------------
+#-----------------------------------------------------------------------------
   def __init__(self,seq1,seq2):
     self.seq1 = seq1
     self.seq2 = seq2
@@ -37,7 +57,7 @@ class Table(object):
     for i in range(len(self.seq2.seq)):
       self.content[0][i+2] = self.seq2.seq[i]
       self.content[1][i+2] = 0
-   #----------------------------------------------------------
+#-----------------------------------------------------------------------------
   def incidence(self):
     for i in range(len(self.seq1.seq)):
       for j in range(len(self.seq2.seq)):
@@ -45,7 +65,7 @@ class Table(object):
           self.content[i+2][j+2] = 0
         else:
           self.content[i+2][j+2] = 1
-  #----------------------------------------------------------
+#-----------------------------------------------------------------------------
   def fillout(self):
     for i in range(len(self.seq1.seq)):
       for j in range(len(self.seq2.seq)):
@@ -53,7 +73,7 @@ class Table(object):
           self.content[i+2][j+2] = max(self.content[i+2][j+2] + self.content[i+1][j+1],self.content[i+2][j+1],self.content[i+1][j+2])
         else:
           self.content[i+2][j+2] = max(self.content[i+2][j+2],self.content[i+2][j+1],self.content[i+1][j+2])
-  #----------------------------------------------------------
+#-----------------------------------------------------------------------------
   def choices(self,i,j):
     choices = list()
     if 0 <= i <len(self.seq1.seq) and 0 <= j < len(self.seq2.seq):
@@ -71,11 +91,11 @@ class Table(object):
     if 0 <= i <len(self.seq1.seq) and j == -1:
       choices.append([i-1,j,'v'])
     return choices
-  #----------------------------------------------------------        
+#-----------------------------------------------------------------------------        
   def tree(self,i,j,move):
     choices = self.choices(i,j)
     if choices == []:
-      return Tree("leaf",[])
+      return Tree("leaf")
     else:
       children = list()
       for x,y,m in choices:
@@ -87,14 +107,14 @@ class Table(object):
         if j == -1:
           s2 = '-'
       return  Tree([s1,s2,move],children)
-  #----------------------------------------------------------
+#-----------------------------------------------------------------------------
   def traceback(self,debug):
     tree = self.tree(len(self.seq1.seq)-1,len(self.seq2.seq)-1,'end')   
     if debug == True:
       print("\ntree")
       tree.stdout()
     return tree.paths()
-  #----------------------------------------------------------    
+#-----------------------------------------------------------------------------    
   def read_path(self,path,move):
     if path == []:
       return [], []
@@ -114,7 +134,7 @@ class Table(object):
       new_path = path[0:len(path)-1]
       s1,s2 = self.read_path(new_path,head[2])
       return seq1 + s1, seq2 + s2
-  #----------------------------------------------------------  
+#-----------------------------------------------------------------------------
   def dynamic_programming(self,name_of_file,option="a",debug=False,display=True):
     paths = self.traceback(debug)
     outputs = list()
@@ -140,10 +160,11 @@ class Table(object):
           sys.stdout.write(n2)
           sys.stdout.write(s2)
     return outputs
-  #---------------------------------------------------------- 
+#----------------------------------------------------------------------------- 
   def stdout(self):
     for a in range(len(self.content)):
       for b in range(len(self.content[a])):
         sys.stdout.write(str(self.content[a][b])+" | ")  
       sys.stdout.write('\n')
       sys.stdout.flush()
+#-----------------------------------------------------------------------------

@@ -2,12 +2,14 @@
 import sys
 sys.path.insert(0, 'Pedigrad_py/Useful/')
 from Useful import *
+#CategoryItem
 #usf
 #----------------------------------------------------------------------------
 import sys
 sys.path.insert(0, 'Pedigrad_py/DProgramming/')
 from DProgramming import *
 #Tree
+#Sequence
 #Table
 #----------------------------------------------------------------------------
 import sys
@@ -22,7 +24,6 @@ import sys
 sys.path.insert(0, 'Pedigrad_py/AlignedFunctor/')
 from AlignedFunctor import *
 #PointedSet
-#Sequence
 #Environment
 #SequenceAlignment
 #----------------------------------------------------------------------------

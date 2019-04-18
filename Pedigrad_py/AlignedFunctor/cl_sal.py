@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------------
-#name (Class) | 5 objects | 4 methods
+#SequenceAlignment (Class) | 5 objects | 4 methods
 #------------------------------------------------------------------------------
 '''
 [Objects] 
@@ -22,7 +22,7 @@
           - segment   [Type] SegmentObject
         [Outputs: 1]
           - return    [Type] 'a
-  .extending_diagram
+  .extending_category
         [Inputs: 1]
           - segment   [Type] SegmentObject
         [Outputs: 1]
@@ -34,7 +34,7 @@
           - outputs         [Type] 'a
         
 [General description] 
-  This structure models the features of a sequence alignment functor, as defined in CTGI. The images of the sequence alignment functor are stored in the object [database] and can be queried throught the method [eval]. The method also computes the images of the right Kan extension of this functor through the method [ran] (TO BE CODED). The extending diagram (see CTGI) used to compute this right Kan extension can be computed through the method [extending_diagram] (TO BE COMPLETED WITH ARROWS).
+  This structure models the features of a sequence alignment functor, as defined in CTGI. The images of the sequence alignment functor are stored in the object [database] and can be queried throught the method [eval]. The method also computes the images of the right Kan extension of this functor through the method [ran] (TO BE CODED). The extending category (see CTGI) used to compute this right Kan extension can be computed through the method [extending_category] (TO BE COMPLETED WITH ARROWS).
     
 >>> Method: .__init__
   [Actions] 
@@ -52,15 +52,15 @@
   [Description] 
     This method returns the image of the sequence alignment functor for the given input SegmentObject item.
 
->>> Method: .extending_diagram
+>>> Method: .extending_category
   [Actions] 
     .return      <- use(segment.self.Seg,self.base)
   [Description] 
-    This method computes the objects of the extending diagram (see CTGI) for compting the right Kan extension of the functor encoded by the method self.eval.
+    This method computes the objects of the extending category (see CTGI) for compting the right Kan extension of the functor encoded by the method self.eval.
 
 >>> Method: .ran
   [Actions] 
-    .return      <- use(cat_item,self.extending_diagram)
+    .return      <- use(cat_item,self.extending_category)
   [Description] 
     This method computes the images of the right Kan extension of the functor encoded by the method self.eval. [TO BE CODED]
 '''
@@ -91,7 +91,7 @@ class SequenceAlignment(object):
         break
     return list()
 #------------------------------------------------------------------------------     
-  def extending_diagram(self,segment):
+  def extending_category(self,segment):
     outputs = list()
     for i in range(len(self.base)):
       for m in self.Seg.homset(segment,self.base[i]):

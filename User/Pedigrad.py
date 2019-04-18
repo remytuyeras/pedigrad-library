@@ -2,17 +2,20 @@
 import sys
 sys.path.insert(0, '../Pedigrad_py/Useful/')
 from Useful import *
+#CategoryItem
 #usf
 #----------------------------------------------------------------------------
 import sys
 sys.path.insert(0, '../Pedigrad_py/DProgramming/')
 from DProgramming import *
 #Tree
+#Sequence
 #Table
 #----------------------------------------------------------------------------
 import sys
 sys.path.insert(0, '../Pedigrad_py/SegmentCategory/')
 from SegmentCategory import *
+#PreOrder
 #SegmentObject
 #MorphismOfSegments
 #CategoryOfSegments
