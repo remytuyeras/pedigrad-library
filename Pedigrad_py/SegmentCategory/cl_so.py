@@ -215,7 +215,7 @@ class SegmentObject(CategoryItem):
         if i+1 < len(self.topology) \
         and (self.topology[i+1][0] - self.topology[i][1] > 1):
           saved_color = True
-        #If no color has been attributed yet (first color)
+        #If no color has been allocated yet (first color)
         if saved_color == '':
           saved_color = self.colors[i]
         #Otherwise, take the infimum with the previous color
