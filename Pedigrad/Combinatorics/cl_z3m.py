@@ -42,7 +42,7 @@ class Z3matrix(object):
           #The output type
           ) -> Z3matrix:
     n, _ = self.dim()
-    return Z3matrix([[self.matrix[i][j]] for i in range(n)],self.row_labels,self.col_labels[i:i+1])
+    return Z3matrix([[self.matrix[i][j]] for i in range(n)],self.row_labels,self.col_labels[j:j+1])
 
   def row(self,
           #List of inputs and their types
